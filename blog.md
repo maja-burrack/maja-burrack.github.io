@@ -1,5 +1,7 @@
 ---
 layout: default
+title: Blog
+permalink: /blog/
 ---
 
 <div class="archive">
@@ -17,3 +19,4 @@ layout: default
   </div>
   {% endfor %}
 </div>
+
