@@ -6,6 +6,8 @@ Working with time-series data in machine learning presents unique challenges. Tr
 
 I often build robust machine learning pipelines in PySpark qua my job, and while the built-in machine learning library is very powerful, sometimes I find it lacking. Fortunately, we can extend it ourselves to suit our needs. Here, I show you how I built a custom time-series cross-validator in PySpark.
 
+[**Jump to solution**](#solution)
+
 # Understanding Time-Series Cross-Validation
 Unlike traditional k-fold cross-validation which splits the data randomly into k number of folds, time-series cross-validation involves splitting the data into consecutive periods, such that the temporal order is respected. The training set of each fold consists of past data, while the validation set consists of more recent data. This approach mimics how the model would be used in practice for forecasting.
 
