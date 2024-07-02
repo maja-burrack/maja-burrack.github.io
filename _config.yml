@@ -38,13 +38,13 @@ logo:
 # Enter your Google Analytics web tracking code (e.g. UA-2110908-2) to activate tracking
 google_analytics:
 
-permalink: /:year/:month/:day/:title/
+permalink: /blog/:title/
 
 # Includes an icon in the footer for each username you enter
 footer-links:
   email: majaburracklarsen@gmail.com
   facebook:
-  github: maja-burrack/maja-burrack.github.io
+  github: 
   instagram: 
   linkedin: maja-b-larsen
   rss: # just type anything here for a working RSS icon
@@ -54,7 +54,7 @@ footer-links:
 markdown: kramdown
 kramdown:
   input: GFM
-  
+
 plugins:
   - jekyll-seo-tag
   - jekyll-sitemap

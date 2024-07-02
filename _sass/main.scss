@@ -7,17 +7,11 @@ blockquote {
   @extend .blockquote;
 }
 
-// img {
-//   @extend .img-fluid;
-//   margin-bottom: 1rem;
-// }
-
 .custom-container {
   max-width: 720px;
   width: 100%; /* Adjust max-width as needed */
   margin: 0 auto; /* Center the container */
 }
-
 
 .navbar {
   margin-bottom: 2rem;
@@ -109,11 +103,3 @@ pre.highlight {
   }
 }
 
-// img.emoji {
-//   // vertical-align: text-top;
-//   max-width: 100%; 
-//   max-height: 100%;
-//   font-family: 'Noto Emoji', sans-serif /* Aligns the emoji to the middle of the text line */
-//   /* Optionally, adjust with margin if needed */
-//   /* margin-bottom: -0.2em; */ /* Adjust as necessary to fine-tune alignment */
-// }
