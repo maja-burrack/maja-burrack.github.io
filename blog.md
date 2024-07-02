@@ -4,16 +4,16 @@ title: Blog
 permalink: /blog/
 ---
 
-<div class="archive">
+<div class="custom-container">
   {% for post in site.posts %} {% assign currDate = post.date | date: "%Y" %} {%
   if currDate != date %}
   <h1 class="archive-year">{{ currDate }}</h1>
   {% assign date = currDate %} {% endif %}
   <div class="archive-item">
-    <span class="post-date archive-date fs-4"
+    <span class="post-date archive-date"
       >{{ post.date | date: "%B %d, %Y" }}</span
     >
-    <a href="{{ post.url | relative_url }}" class="archive-title fs-4"
+    <a href="{{ post.url | relative_url }}" class="archive-title"
       >{{ post.title }}</a
     >
   </div>
