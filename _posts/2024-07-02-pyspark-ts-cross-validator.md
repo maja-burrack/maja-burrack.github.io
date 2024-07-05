@@ -2,16 +2,14 @@
 layout: post
 title: Creating a Custom Time-Series Cross-Validator in PySpark
 ---
-Working with time-series data in machine learning presents unique challenges. Traditional cross-validation techniques like k-fold cross-validation might not be suitable as they ignore the temporal order of the data. 
-
 I often build robust machine learning pipelines in PySpark qua my job, and while the built-in machine learning library is very powerful, sometimes I find it lacking. Fortunately, we can extend it ourselves to suit our needs. Here, I show you how I built a custom time-series cross-validator in PySpark.
 
 [**Jump to solution**](#solution)
 
 # Understanding Time-Series Cross-Validation
-Unlike traditional k-fold cross-validation which splits the data randomly into k number of folds, time-series cross-validation involves splitting the data into consecutive periods, such that the temporal order is respected. The training set of each fold consists of past data, while the validation set consists of more recent data. This approach mimics how the model would be used in practice for forecasting.
+Unlike traditional k-fold cross-validation, which splits the data randomly into $$k$$ folds, time-series cross-validation involves splitting the data into consecutive periods, such that the temporal order is respected. The training set of each fold consists of past data, while the validation set consists of more recent data. This approach mimics how the model would be used in practice for forecasting.
 
-There are different ways of creating these folds in time-series cross-validation. Two of the most common ways are rolling windows and extending windows. In the rolling window setup, the training sets have the same size as we let the beginning of the training set roll forward. On the other hand, the extending window setup enables the training to expand as the start of the training set is kept constant.
+There are different ways of creating these folds in time-series cross-validation. Two of the most common ways are rolling windows and expanding windows. In the rolling window setup, the training sets have the same size as we let the beginning of the training set roll forward. On the other hand, the expanding window setup enables the training to expand as the start of the training set is kept constant.
 
 <figure class="figure text-center">
   <img src="{{ '/assets/images/time-series-train-val-splits.png' | relative_url }}" alt="time-series-train-val-splits" class="img-fluid">
@@ -164,7 +162,7 @@ class tsCrossValidator(CrossValidator):
         
         return datasets
 ```
-We have introduced 4 new parameters in the custom tsCrossValidator:
+<!-- We have introduced 4 new parameters in the custom tsCrossValidator:
 
 1. `datetimeCol`: The name of the column to split by. This would usually be a `date` or `datetime` column.
 2. `timeSplit`: The length of time to have in the validation set. This should be something like a `timedelta`.
@@ -172,12 +170,11 @@ We have introduced 4 new parameters in the custom tsCrossValidator:
 4. `disableExpandingWindow`: This boolean parameter allows you to disable expanding windows, thus enabling rolling windows instead.
 
 In addition to introducing these new parameters, I have also defined *setting* and *getting* methods for all of them, which I find useful.
-Finally, I have defined a `_kFold` method to override the one in the standard `CrossValidator`.
+Finally, I have defined a `_kFold` method to override the one in the standard `CrossValidator`. -->
 
 # Conclusion
-That's it! You can replace your `CrossValidator` with the `tsCrossValidator` instead and fit your pipelines and tune your hyperparamters like you usually would.
+That's it! You can replace your `CrossValidator` with the `tsCrossValidator` instead and fit your pipelines and tune your hyperparameters like you usually would.
 
 # Further reading
 I found the following particularly helpful:
 - [How to Backtest Machine Learning Models for Time Series Forecasting](https://machinelearningmastery.com/backtest-machine-learning-models-time-series-forecasting/) (last visited 2024-01-14)
-

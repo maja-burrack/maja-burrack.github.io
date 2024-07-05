@@ -1,6 +1,6 @@
 async function fetchMetadataAndGenerateTable() {
     try {
-        const response = await fetch('/scripts/metadata.json');
+        const response = await fetch('/scripts/booklist.json');  
         const metadata = await response.json();
 
         // Sort the metadata by completion_date in descending order
@@ -12,7 +12,7 @@ async function fetchMetadataAndGenerateTable() {
 
         // Define the table and headers
         let table = '<table class="minimalist-table">';
-        table += '<thead><tr><th>Title</th><th>Author</th><th>Recommend</th><th>Completed</th></tr></thead><tbody>';
+        table += '<thead><tr><th>Title</th><th>Author(s)</th><th>Recommend</th><th>Completed</th></tr></thead><tbody>';
 
         // Populate the table rows
         metadata.forEach(item => {
@@ -48,6 +48,6 @@ async function fetchMetadataAndGenerateTable() {
     }
 }
 
-// // Call the function to fetch metadata and generate the table
+// Call the function to fetch metadata and generate the table
 fetchMetadataAndGenerateTable();
 

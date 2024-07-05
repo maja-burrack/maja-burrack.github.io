@@ -180,6 +180,18 @@
         "recommend": true
     },
     {
+        "type": "non-fiction",
+        "genre": "self-help, meditation, memoir",
+        "language": "english",
+        "completed": "true",
+        "completion_date": "2022-09-14",
+        "date": "2022-09-14",
+        "recommend": true,
+        "author": "Dan Harris",
+        "title": "10% Happier",
+        "year": 2014
+    },
+    {
         "author": "Neil Gaiman",
         "title": "The Ocean at the End of the Lane",
         "year": 2013,
@@ -250,6 +262,18 @@
         "completion_date": "2022-01-19",
         "date": "2022-07-14",
         "recommend": false
+    },
+    {
+        "type": "fiction",
+        "genre": "fantasy, YA",
+        "language": "english",
+        "completed": "true",
+        "completion_date": "2022-02-01",
+        "date": "2022-07-14",
+        "recommend": "neutral",
+        "author": "Maggie Stiefvater",
+        "title": "Call Down the Hawk",
+        "year": 2019
     },
     {
         "author": "Sarah J. Maas",
@@ -490,6 +514,18 @@
         "completion_date": "2023-12-25",
         "date": "2024-01-02",
         "recommend": true
+    },
+    {
+        "type": "non-fiction",
+        "genre": "memoir, technology",
+        "language": "english",
+        "completed": "true",
+        "completion_date": "2022-09-17",
+        "date": "2022-09-17",
+        "recommend": true,
+        "author": "Anna Wiener",
+        "title": "Uncanny Valley",
+        "year": 2020
     },
     {
         "author": "Caroline Criado Perez",
@@ -742,6 +778,18 @@
         "completion_date": "2023-11-27",
         "date": "2023-11-29",
         "recommend": true
+    },
+    {
+        "type": "non-fiction",
+        "genre": "meditation, spirituality",
+        "language": "english",
+        "completed": "true",
+        "completion_date": "2022-09-25",
+        "date": "2022-09-26",
+        "recommend": true,
+        "author": "Sam Harris",
+        "title": "Waking Up",
+        "year": 2014
     },
     {
         "author": "Will Storr",
