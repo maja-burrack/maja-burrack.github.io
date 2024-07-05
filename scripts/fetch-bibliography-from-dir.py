@@ -33,21 +33,25 @@ def filter_metadata(metadata, authors_to_remove=AUTHORS_TO_REMOVE):
     # remove unwanted authors
     metadata_filtered = [item for item in metadata if item['author'] not in authors_to_remove]
     # remove unfinished books
-    metadata_filtered = [item for item in metadata_filtered if item['completed'] is not None]
+    metadata_filtered = [item for item in metadata_filtered if item['completion_date'] is not None]
     # remove any accidental files without a title
     metadata_filtered = [item for item in metadata_filtered if item['title'] is not None]
     return metadata_filtered
 
 
 if __name__ == "__main__":
-    directory_path = input('path to md files:')  # Replace with your directory path containing Markdown files
+    # directory_path = input('path to md files:')  # Replace with your directory path containing Markdown files
     metadata = fetch_metadata_from_markdown_files(directory_path)
     metadata_filtered = filter_metadata(metadata)
     
     # Write metadata to JSON file
-    json_file_path = 'metadata.json'  # Path to save the JSON file
+    json_file_path = 'booklist.json'  # Path to save the JSON file
     with open(json_file_path, 'w', encoding='utf-8') as json_file:
         json.dump(metadata_filtered, json_file, ensure_ascii=False, indent=4, default=str)
 
-    print(f"Metadata written to {json_file_path}")
+    print(f"Book list written to {json_file_path}")
+    
+    config_file = parent_dir + os.sep + '_data/library.yml'
+    with open(config_file, 'w') as file:
+        yaml.dump({'update-date': datetime.now().strftime('%Y-%m-%d')}, file, default_flow_style=False)
     
