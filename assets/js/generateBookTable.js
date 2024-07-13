@@ -12,7 +12,7 @@ async function fetchMetadataAndGenerateTable() {
 
         // Define the table and headers
         let table = '<table class="minimalist-table">';
-        table += '<thead><tr><th>Title</th><th>Author(s)</th><th>Recommend</th><th>Completed</th></tr></thead><tbody>';
+        table += '<thead><tr><th>Title</th><th>Author(s)</th><th style="width: 100px;">Type</th><th>Recommend</th><th>Completed</th></tr></thead><tbody>';
 
         // Populate the table rows
         metadata.forEach(item => {
@@ -34,6 +34,7 @@ async function fetchMetadataAndGenerateTable() {
             table += `<tr>
                         <td>${item.title || ''}</td>
                         <td>${item.author || ''}</td>
+                        <td>${item.type || ''}</td>
                         <td>${recommendCellContent}</td>
                         <td>${formattedCompletionDate || ''}</td>
                       </tr>`;
