@@ -35,7 +35,7 @@ async function fetchMetadataAndGenerateTable() {
                         <td>${item.title || ''}</td>
                         <td>${item.author || ''}</td>
                         <td>${item.type || ''}</td>
-                        <td>${recommendCellContent}</td>
+                        <td style="text-align: center;">${recommendCellContent}</td>
                         <td>${formattedCompletionDate || ''}</td>
                       </tr>`;
         });
