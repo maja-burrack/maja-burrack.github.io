@@ -212,7 +212,8 @@
         "language": "danish",
         "completed": "true",
         "completion_date": "2024-07-17",
-        "date": "2024-07-17"
+        "date": "2024-07-17",
+        "recommend": true
     },
     {
         "author": "Veronica Roth",
