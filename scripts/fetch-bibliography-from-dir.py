@@ -51,7 +51,7 @@ if __name__ == "__main__":
 
     print(f"Book list written to {json_file_path}")
     
-    config_file = parent_dir + os.sep + '_data/library.yml'
+    config_file = os.path.dirname(os.getcwd()) + os.sep + '_data/library.yml'
     with open(config_file, 'w') as file:
         yaml.dump({'update-date': datetime.now().strftime('%Y-%m-%d')}, file, default_flow_style=False)
     
