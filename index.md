@@ -12,13 +12,13 @@ When I am not deep in data at work, you'll usually find me in a Pilates reformer
 
 I'm also into:
 
-- Travelling to far-off places 🌍 I particularly enjoy Asian metropolises and I usually travel alone.
-- Bouldering 💪🏻 I've been doing this regularly since April 2024.
-- Digital minimalism. You won't find me Instagramming nor sharing status updates on Facebook. But I won't mind if you do 😇
+- **Travelling to far-off places** 🌍 I particularly enjoy Asian metropolises.
+- **Bouldering** 💪🏻 I've been doing this regularly since April 2024.
+- **Digital minimalism.** You won't find me Instagramming nor sharing status updates on Facebook
 
 <br/><br/>
 
 [**Read more about me →**]({{site.baseurl}}/about)
 
-[**Check out my blog posts →**]({{site.baseurl}}/blog)
+[**Check out my data science notes →**]({{site.baseurl}}/blog)
 
