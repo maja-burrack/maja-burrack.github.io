@@ -1,6 +1,6 @@
 - name: Home
-  link: /
-- name: Notes
+  link: 
+- name: Blog
   link: /blog/
 - name: Library
   link: /books/

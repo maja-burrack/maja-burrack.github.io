@@ -2,10 +2,24 @@
 layout: default
 ---
 
+<script type="text/javascript" async>
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']]
+    },
+    svg: {
+      fontCache: 'global'
+    }
+  };
+  </script>
+  <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
 <div class="post">
-  <h1>{{ page.title }}</h1>
-  <span class="fs-6 text-muted">{{ page.date | date: "%B %-d, %Y" }}</span>
-  <div class="mt-4">{{ content }}</div>
+  <div class="front-matter">
+    <h1>{{ page.title }}</h1>
+    <span class="archive-date">{{ page.date | date: "%d %B %Y" }}</span>
+  </div>
+  <div class="mt-4 post">{{ content }}</div>
   <!-- Back to Blog link -->
   <div class="mt-4">
     <a href="{{ '/blog/' | relative_url }}"><b>← Back to Blog</b></a>

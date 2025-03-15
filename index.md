@@ -1,24 +1,30 @@
 ---
-layout: default
 ---
+<html>
+<head>
+	<title>Maja Burrack Larsen</title>
+	<meta charset='UTF-8'>
+	<meta content='width=device-width, initial-scale=1' name='viewport'/>
 
-# You made it! Welcome!
-
-**I'm Maja, a Copenhagen-based Data Scientist focusing on predictive analytics and machine learning.**
-
-**These days, I model some cool things for [Tembi](https://tembi.io)'s data platform.**
-
-When I am not deep in data at work, you'll usually find me in a Pilates reformer class or winding down in the company of friends or a good book (and sometimes wine 🍷).
-
-I'm also into:
-
-- **Travelling to far-off places** 🌍 I particularly enjoy Asian metropolises.
-- **Bouldering** 💪🏻 I've been doing this regularly since April 2024.
-- **Digital minimalism.** You won't find me Instagramming nor sharing status updates on Facebook
-
-<br/><br/>
-
-[**Read more about me →**]({{site.baseurl}}/about)
-
-[**Check out my data science notes →**]({{site.baseurl}}/blog)
-
+	<meta name='description' content='Maja Larsen is a data scientist in Copenhagen'>
+	<meta name='keywords' content=''>
+	<meta name='author' content='Maja Burrack Larsen'>
+	<link rel='stylesheet' type='text/css' href='/assets/css/styles.css'/>
+</head>
+<body>
+	<div id='landing'>
+		<h1>Maja Burrack Larsen</h1>
+		<ul>
+			<li>
+				<a href='/blog'>Blog</a>
+			</li>
+			<li>
+				<a href='https://www.linkedin.com/in/maja-b-larsen/' target='_blank'>Resume</a>
+			</li>
+			<li>
+				<a href='/contact'>Contact</a>
+			</li>
+		</ul>
+	</div>
+</body>
+</html>

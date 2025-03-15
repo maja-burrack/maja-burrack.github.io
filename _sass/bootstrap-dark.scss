@@ -18,7 +18,7 @@
 :root {
     --bs-blue: #0d6efd;
     --bs-indigo: #6610f2;
-    --bs-purple: #6f42c1;
+    --bs-purple: #8e42c1;
     --bs-pink: #d63384;
     --bs-red: #dc3545;
     --bs-orange: #fd7e14;
@@ -38,7 +38,7 @@
     --bs-danger: #dc3545;
     --bs-light: #f8f9fa;
     --bs-dark: #212529;
-    --bs-font-sans-serif: Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Noto Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    --bs-font-sans-serif: Roboto, -apple-system, Helvetica, arial, sans-serif, "Apple Color Emoji", "Noto Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     --bs-font-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     --bs-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0))
 }
@@ -56,8 +56,9 @@
 }
 
 body {
-    margin: 0;
+    margin: 1.5rem;
     font-family: var(--bs-font-sans-serif);
+    text-align: justify;
     // font-family: var(--bs-font-monospace);
     font-size: 1rem;
     font-weight: 400;
@@ -245,12 +246,12 @@ sup {
 }
 
 a {
-    color: #ae6cff;
+    color: var(--bs-purple);
     text-decoration: none
 }
 
 a:hover {
-    color: #ae6cff
+    color: var(--bs-purple)
 }
 
 a:not([href]):not([class]),
@@ -287,7 +288,7 @@ pre code {
 
 code {
     font-size: .875em;
-    color: var(--bs-pink);
+    color: var(--bs-black);
     word-wrap: break-word;
 
 }
@@ -647,7 +648,7 @@ progress {
 .figure-caption {
     font-size: .875em;
     color: #6c757d;
-    text-align: center;
+    text-align: inherit;
 }
 
 .container,
@@ -11870,7 +11871,7 @@ fieldset:disabled .btn {
     }
 
     code {
-        color: #45b5aa
+        color: inherit
     }
 
     a>code {
