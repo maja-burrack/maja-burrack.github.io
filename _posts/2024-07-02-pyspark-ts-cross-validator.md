@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Creating a Custom Time-Series Cross-Validator in PySpark
+subtitle: I show how to extend PySpark’s built-in cross-validation to support time-series data, with custom folds and windowing strategies.
 ---
 I often build robust machine learning pipelines in PySpark qua my job, and while the built-in machine learning library is very powerful, sometimes I find it lacking. Fortunately, we can extend it ourselves to suit our needs. Here, I show you how I built a custom time-series cross-validator in PySpark.
 
