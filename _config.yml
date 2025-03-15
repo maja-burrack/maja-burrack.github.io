@@ -21,13 +21,13 @@ tagline:
 description:
 
 # The full URL to your site. Note: site.github.url will be used by default.
-url:
+#url:
 
 # If you're hosting your site at a Project repository on GitHub pages
 # (http://yourusername.github.io/repository-name)
 # and NOT your User repository (http://yourusername.github.io)
 # then add in the baseurl here, like this: "/repository-name"
-baseurl: ""
+#baseurl: ""
 
 # global author information
 author: maja-burrack
@@ -42,9 +42,9 @@ permalink: /blog/:title/
 
 # Includes an icon in the footer for each username you enter
 footer-links:
-  email: majaburracklarsen@gmail.com
+  email: 
   facebook:
-  github: 
+  github: maja-burrack
   instagram: 
   linkedin: maja-b-larsen
   rss: # just type anything here for a working RSS icon
@@ -55,7 +55,12 @@ markdown: kramdown
 kramdown:
   input: GFM
 
+sass:
+  style: compressed  # or expanded, depending on your preference
+
+
 plugins:
   - jekyll-seo-tag
   - jekyll-sitemap
   - jekyll-feed
+  - jekyll-sass-converter
