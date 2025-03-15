@@ -29,6 +29,13 @@ blockquote {
   margin: 0 auto; /* Center the container */
 }
 
+.post-container {
+  max-width: 720px;
+  width: 100%; /* Adjust max-width as needed */
+  margin: 0 auto; /* Center the container */
+  text-align: left;
+}
+
 .navbar {
   margin-bottom: 2rem;
   // border-bottom: 0.125rem solid hsl(0, 0%, 30%);
@@ -37,6 +44,33 @@ blockquote {
   // font-size: 1.5rem;
 }
 
+.nav {
+  font-size: small;
+}
+
+.nav ul {
+	list-style-type: none;
+	padding: 0;
+  margin-right: 0;
+  margin-left: auto;
+}
+
+.nav ul li {
+	display: inline;
+	margin-right: 10px;
+	line-height: 1.5em;
+}
+
+#landing {
+	max-width: 700px;
+	margin: 119px auto;
+}
+
+#landing ul {
+    list-style-type: none;
+    padding-left: 0;
+}​
+
 .archive-year {
   margin-top: 2rem;
   margin-bottom: 1rem;
@@ -44,12 +78,42 @@ blockquote {
 }
 
 .archive-date {
-  float: right;
-  margin-left: 1rem;
+  // float: right;
+  text-transform: uppercase;
+  font-size: small;
+  font-weight: bold;
+  margin-left: none;
+  padding-top: 1%;
+  color: #575757;
 }
 
 .archive-item {
-  margin-bottom: 0.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.archive-title {
+  color: #212529;
+  // text-decoration: none;
+  font-weight:bold;
+  font-size: larger;
+}
+
+.front-matter {
+  padding-bottom: 20px;
+  // border-bottom: 1px solid #c4c4c4;
+}
+
+.front-matter h2 {
+  // font-style: italic;
+  font-weight: bold;
+  font-size:small
+}
+
+
+.post-subtitle {
+  font-weight: normal;
+  font-size: smaller;
+  margin-top: 1%;
 }
 
 .footer-container {
@@ -73,10 +137,6 @@ blockquote {
   color: #212529;
 }
 
-.archive-title {
-  color: #212529;
-  // text-decoration: none;
-}
 
 .highlight {
   background-color: #272822;
