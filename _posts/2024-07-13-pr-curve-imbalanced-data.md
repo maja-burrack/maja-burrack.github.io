@@ -4,18 +4,6 @@ title: ROC Curve vs Precision-Recall Curve for Imbalanced Datasets
 subtitle: I explain the difference between ROC and precision-recall curves, highlighting their use in evaluating classifiers with imbalanced data.
 ---
 
-<script type="text/javascript" async>
-MathJax = {
-  tex: {
-    inlineMath: [['$', '$'], ['\\(', '\\)']]
-  },
-  svg: {
-    fontCache: 'global'
-  }
-};
-</script>
-<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-
 Area under receiver-operating characteristic (ROC) curve (`auc`) and area under precision-recall (PR) curve (`aucpr`) are popular metrics for evaluating the performance of a binary classification model.
 
 For such a classification model with positive class $1$ and negative class $0$, and predictions (or probabilities) in the interval $(0, 1)$:

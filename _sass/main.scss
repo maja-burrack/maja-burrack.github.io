@@ -1,11 +1,3 @@
-table {
-  @extend .table;
-  // @extend .table-striped;
-}
-
-blockquote {
-  @extend .blockquote;
-}
 
 .minimalist-table {
   width: 100%;
@@ -178,8 +170,4 @@ pre.highlight {
     display: inline-block !important;
   }
 }
-
-// .minimalist-table th {
-//   background-color: #f2f2f2; /* Optional: Header background color */
-// }
 

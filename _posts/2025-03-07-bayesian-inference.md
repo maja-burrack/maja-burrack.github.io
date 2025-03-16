@@ -4,18 +4,6 @@ title: Bayesian Inference
 subtitle: I give an introduction to Bayesian inference and Bayes' Theorem, and derive the posterior of the binomial model under a Beta prior, showing that the Beta prior is conjugate in the process.
 ---
 
-<script type="text/javascript" async>
-MathJax = {
-  tex: {
-    inlineMath: [['$', '$'], ['\\(', '\\)']]
-  },
-  svg: {
-    fontCache: 'global'
-  }
-};
-</script>
-<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-
 In Bayesian inference, we treat parameters as random variables, meaning they have a probability distribution. This is in contrast to classical (frequentist) inference where model parameters are considered fixed. Bayesian inference seeks to make probability statements about parameters conditional on the observed data. It amounts to deriving a posterior probability $p(\theta \mid y)$ as a consequence of a prior probability $p(\theta)$ and a likelihood $p(y \mid \theta)$, where $\theta$ denotes a model parameter, and $y$ is the observed data. The posterior probability is computed according to Bayes' Theorem:
 
 $$
