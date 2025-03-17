@@ -4,7 +4,7 @@ title: Conjugate Prior for the Univariate Normal Distribution
 subtitle: I show that the Normal-inverse-gamma distribution is a conjugate prior to the normal distribution with unknown mean and variance.
 ---
 
-Assume we have a univariate Gaussian dataset $y=\{y_{1}, ..., y_n\}$ with unknown mean $\mu$ and unknown variance $\sigma^2$, i.e.
+Assume we have a univariate Gaussian dataset $y=\\{y_{1}, ..., y_n\\}$ with unknown mean $\mu$ and unknown variance $\sigma^2$, i.e.
 
 $$
 y_{i} \sim \mathcal{N}(\mu, \sigma^2), \quad i=1, ..., n,
