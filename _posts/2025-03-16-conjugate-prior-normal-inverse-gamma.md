@@ -146,9 +146,11 @@ $$
 This is proportional to $\textrm{InvGamma}(\sigma^2 ; a_n, b_n) \cdot \mathcal{N}(\mu ; \mu_n, \sigma^2)$, where
 
 $$
-a_n = a + \frac{n}{2} + 1 \\
+\displaylines{
+a_n = a + \frac{n}{2} \\
 b_n = \frac{1}{2}\sum_{i=1}^n (y_i - \bar{y})^2 + \frac{n(\bar{y}-\mu_0)^2}{2(n+1)} + b \\
 \mu_n = \frac{n\bar{y} + \mu_0}{n+1}
+}
 $$
 
 and so we are finally done, having showed that the Normal-inverse-gamma distribution is conjugate to the normal likelihood.
