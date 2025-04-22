@@ -16,13 +16,13 @@
 }
 
 .custom-container {
-  max-width: 720px;
+  max-width: 900px;
   width: 100%; /* Adjust max-width as needed */
   margin: 0 auto; /* Center the container */
 }
 
 .post-container {
-  max-width: 720px;
+  max-width: 900px;
   width: 100%; /* Adjust max-width as needed */
   margin: 0 auto; /* Center the container */
   text-align: left;
@@ -169,5 +169,27 @@ pre.highlight {
   .dark-avatar {
     display: inline-block !important;
   }
+}
+
+blockquote {
+  border: 1px solid black;
+  padding: 1rem 1.25rem;
+  border-radius: 0.5rem;
+  background-color: transparent;
+  margin: 1.5rem 0;
+}
+
+/* In dark mode, override the border color */
+@media (prefers-color-scheme: dark) {
+  blockquote {
+    border: 1px solid white;
+    color: #e1e1e1;
+  }
+}
+
+.mathjax-scrollable {
+  overflow-x: auto;  /* Enables horizontal scrolling */
+  white-space: nowrap;  /* Prevents line breaks */
+  padding: 10px 0;  /* Adds some padding to the sides */
 }
 

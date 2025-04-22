@@ -16,7 +16,7 @@ $$
 p(y_{i} \mid \mu, \sigma^2) = \frac{1}{\sqrt{2 \pi \sigma^2}}\exp \left[ -\frac{1}{2 \sigma^2} (y_i - \mu)^2 \right].
 $$
 
-If we want to estimate the parameters $\mu$ and $\sigma^2$ using [Bayesian methods]({{site.baseurl}}/bayesian-inference), we multiply the likelihood $p(y \mid \theta)$ of the data with the prior distribution $p(\theta)$ of the parameters and then normalize to obtain the posterior distribution of the parameters conditioned on the data, as given by Bayes' Theorem:
+If we want to estimate the parameters $\mu$ and $\sigma^2$ using [Bayesian methods]({{site.baseurl}}/blog/bayesian-inference), we multiply the likelihood $p(y \mid \theta)$ of the data with the prior distribution $p(\theta)$ of the parameters and then normalize to obtain the posterior distribution of the parameters conditioned on the data, as given by Bayes' Theorem:
 
 $$
 p(\mu, \sigma^2 \mid y) = \frac{p(y\mid \mu, \sigma^2)p(\mu, \sigma^2)}{\int \int p(y\mid \mu, \sigma^2)p(\mu, \sigma^2)d\mu d\sigma^2}.
