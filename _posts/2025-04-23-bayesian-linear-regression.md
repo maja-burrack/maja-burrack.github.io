@@ -10,7 +10,7 @@ $$
 y_{i} = \beta^{T}\mathbf{x}_{i} + \epsilon_i, \quad i = 1, ..., n
 $$
 
-where $y_{i}$ is the scalar response for the $i$ th observation $\mathbf{x}_{i}$ is a $1 \times p$ vector of predictor variables; $\beta$ is an $p \times 1$ vector of parameters; and $\epsilon_i$ is the unobserved error of each observation. We will assume $\epsilon_i \sim\mathcal{N}(0, \sigma^2)$. It follows that $y_i \sim \mathcal{N}(\beta^T \mathbf{x}_i, \sigma^2)$. 
+where $y_{i}$ is the scalar response for the $i$-th observation $\mathbf{x}_{i}$ is a $1 \times p$ vector of predictor variables; $\beta$ is an $p \times 1$ vector of parameters; and $\epsilon_i$ is the unobserved error of each observation. We will assume $\epsilon_i \sim\mathcal{N}(0, \sigma^2)$. It follows that $y_i \sim \mathcal{N}(\beta^T \mathbf{x}_i, \sigma^2)$. 
 
 Recall, we perform [Bayesian Inference]({{site.baseurl}}/blog/bayesian-inference) by specifying a prior $p(\beta, \sigma^2)$ on the parameters and a likelihood $p(y \mid \beta, \sigma^2)$, and then deriving (or approximating) the posterior $p(\beta, \sigma^2 \mid y)$ using Bayes' Theorem:
 
@@ -115,9 +115,26 @@ p(y \mid \beta, \sigma^2)p(\beta \mid \sigma^2)p(\sigma^2)
 	
 	&\times \frac{b_0^{a_0}}{\Gamma(a_0)}(\sigma^2)^{-(a_0+1)}\exp \left[ \frac{-b_0}{\sigma^2} \right].
 \end{split}
-\label{eq:joint-probability}
+% \label{eq:joint-probability}
 \end{align}
 $$
+
+Collecting the exponents:
+
+$$
+\begin{multline}
+p(y \mid \beta, \sigma^2)p(\beta \mid \sigma^2)p(\sigma^2) \\
+	= (2\pi\sigma^2)^{-n/2} (2\pi\sigma^2)^{-p/2}|\Lambda_0|^{1/2} \frac{b_0^{a_0}}{\Gamma(a_0)}(\sigma^2)^{-(a_0+1)}
+	\exp 
+	\left[ 
+		\frac{-1}{2\sigma^2} (y-X\beta)^T(y-X\beta)
+		-\frac{1}{2}(\beta-\mu_0)^T\Lambda_0(\beta-\mu_0) 
+		-\frac{b_0}{\sigma^2} 
+	\right] 
+\label{eq:joint-probability}
+\end{multline}
+$$
+
 
 Using the trick $y-X\beta = y - X\hat{\beta} + X\hat{\beta} - X\beta$, where $\hat{\beta} = (X^T X)^{-1}X^T y$ is the ordinary least squares (OLS) estimator (assuming $X^TX$ is invertible), we can write the following:
 
@@ -184,21 +201,20 @@ $$
 			-b_N^T\mu_N}
 			+ \hat{\beta}^TX^TX\hat{\beta} 
 			+ \mu_0^T\Lambda_0\mu_0 \\
-		= \underbrace{(y-X\hat{\beta})^T(y-X\hat{\beta})}_{t_1}
+		= {\color{blue}{(y-X\hat{\beta})^T(y-X\hat{\beta})}}
 			+ {\color{red}(\beta -\mu_N)^T\Lambda_N(\beta-\mu_N)
 			-\mu_N^T\Lambda_N\mu_N}
-			+ \underbrace{\hat{\beta}^TX^TX\hat{\beta}}_{t_4}
+			+ {\color{blue}{\hat{\beta}^TX^TX\hat{\beta}}}
 			+ \mu_0^T\Lambda_0\mu_0.\\
 \end{multline*}
 $$
 
-Finally, let's have a look at the first and second-to-last terms $t_1$ and $t_4$ using the substitution with the OLS estimator:
+Finally, let's have a look at the first and second-to-last terms (colored blue above) using the substitution with the OLS estimator:
 
 $$
-\begin{align}
-	t_1 + t_4 
-		&= (y-X\hat{\beta})^T(y-X\hat{\beta}) 
-			+\hat{\beta}^TX^TX\hat{\beta} \\
+\begin{aligned}
+ (y-X\hat{\beta})^T(y-X\hat{\beta}) 
+			+\hat{\beta}^TX^TX\hat{\beta}
 		&= (y-X\hat{\beta})^T(y-X\hat{\beta}) 
 			+ \hat{\beta}^TX^TX(X^TX)^{-1}X^Ty \\
 		&= (y-X\hat{\beta})^T(y-X\hat{\beta})
@@ -206,10 +222,10 @@ $$
 		&= y^Ty+\hat{\beta}^TX^TX\hat{\beta}-2\hat{\beta}^TX^Ty + \hat{\beta}^TX^Ty\\
 		&= y^Ty + \hat{\beta}^TX^Ty - 2\hat{\beta}^TX^Ty + \hat{\beta}^TX^Ty \\
 		&= y^Ty
-\end{align}
+\end{aligned}
 $$
 
-Putting it together, we get
+Plugging this in, we get
 
 $$
 (y-X\beta)^T(y-X\beta) + (\beta-\mu_0)^T\Lambda_0 (\beta- \mu_0) 
@@ -221,11 +237,11 @@ $$
 
 where $\Lambda_N = X^TX + \Lambda_0$ and $\mu_N = \Lambda_N^{-1}(\mu_0^T\Lambda_0 + X^Ty)$. 
 
-Now we can go back to \eqref{eq:joint-probability} and rewrite the sum of the exponents as
+Now we can go back to \eqref{eq:joint-probability} and rewrite the exponent as
 
 $$
 \begin{gathered}
-	\left[-\frac{1}{2\sigma^2}(y-X\beta)^T(y-X\beta)\right] + \left[-\frac{1}{2\sigma^2}(\beta-\mu_0)^T\Lambda_0(\beta-\mu_0)\right] + \left[-\frac{b_0}{\sigma^2}\right] \\
+	\left[ -\frac{1}{2\sigma^2}(y-X\beta)^T(y-X\beta) - \frac{1}{2\sigma^2}(\beta-\mu_0)^T\Lambda_0(\beta-\mu_0) - \frac{b_0}{\sigma^2} \right]
 
 	= -\frac{1}{2\sigma^2}\left[ (y-X\beta)^T(y-X\beta) + (\beta-\mu_0)^T\Lambda_0(\beta-\mu_0)  + 2b_0\right] \\
 
@@ -290,7 +306,7 @@ where the updated posterior parameters are:
 $$
 \begin{aligned}
 \Lambda_N &= X^T X + \Lambda_0, \\
-\mu_N &= \Lambda_N^{-1}(X^T X \hat{\beta} + \Lambda_0 \mu_0), \\
+\mu_N &= \Lambda_N^{-1}(X^T y + \Lambda_0 \mu_0), \\
 a_N &= a_0 + \frac{n}{2}, \\
 b_N &= b_0 + \frac{1}{2}(y^T y + \mu_0^T \Lambda_0 \mu_0 - \mu_N^T \Lambda_N \mu_N).
 \end{aligned}
