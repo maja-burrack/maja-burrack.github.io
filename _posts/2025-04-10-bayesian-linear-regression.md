@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Bayesian Linear Regression
-subtitle: meh
+subtitle: I provide a complete Bayesian analysis for a standard linear regression model with a Normal-inverse-gamma prior, demonstrating how the conjugate structure yields closed-form expressions for both the posterior distribution and the posterior predictive.
 ---
 
 Consider a standard linear regression formulation with
@@ -301,7 +301,7 @@ $$
 Let's turn to the marginal likelihood in the denominator of \eqref{eq:joint-probability}:
 
 $$
-\int \int p(y \mid \beta, \sigma^2)p(\beta \mid \sigma^2)p(\sigma^2)d\beta d\sigma^2.
+p(y) = \int \int p(y \mid \beta, \sigma^2)p(\beta \mid \sigma^2)p(\sigma^2)d\beta d\sigma^2.
 $$
 
 Because we have managed to write the joint probability in a rather convenient form, evaluating this integral turns out to not be too hard. Let's start with integrating out $\beta$. Only the first line in \eqref{eq:joint-lines} has terms in $\beta$, and it looks very similar to the pdf of a multivariate normal distribution. In fact, if we write 
@@ -470,23 +470,24 @@ $$
 		&= \int \mathcal{N}(y^* \mid X^*\mu_N, \sigma^2\underbrace{(I+X^*\Lambda_N^{-1}X^{*T})}_{M_0})\cdot \textrm{InvGamma}(\sigma^2 \mid a_n, b_n) d\sigma^2 \\
 
 		&= \int (2 \pi \sigma^2)^{-p/2} | M_0|^{-1/2}
-			\exp \left[ -\frac{1}{2\sigma^2} (y^* - X^*\mu_N)^T M_0^{-1}(y^*-X^*\mu_N) \right] \\
-			&\times \frac{b_N^{a_N}}{\Gamma (a_N)} (\sigma^2)^{-(a_N + 1)} \exp \left[ -\frac{b_N}{\sigma^2}\right] d\sigma^2 \\
+			\exp \left[ -\frac{1}{2\sigma^2} (y^* - X^*\mu_N)^T M_0^{-1}(y^*-X^*\mu_N) \right]
+			\cdot \frac{b_N^{a_N}}{\Gamma (a_N)} (\sigma^2)^{-(a_N + 1)} \exp \left[ -\frac{b_N}{\sigma^2}\right] d\sigma^2 \\
 
 		&= \frac{b_N^{a_N}}{\Gamma(a_N)(2 \pi )^{p/2} | M_0 |^{1/2}}
 			\int 
 			(\sigma^2)^{-(a_N + 1 + p/2)}
 			
-			\exp \left[ -\frac{1}{2\sigma^2} \left( (y^* - X^*\mu_N)^T M_0^{-1}(y^*-X^*\mu_N) + 2b_N\right) \right] d\sigma^2\\
+			\exp \left[ -\frac{1}{2\sigma^2} \left( (y^* - X^*\mu_N)^T M_0^{-1}(y^*-X^*\mu_N) + 2b_N\right) \right] d\sigma^2.
 \end{aligned}
 $$
 
-<p style="text-align: right; color: grey;">
-(substituting with $u=\tfrac{1}{\sigma^2} \Rightarrow | d\sigma^2 |= \tfrac{1}{u^2}du$)
-</p>
+For the next step we do integration by substitution, using the substitutions $u=\frac{1}{\sigma^2} \Rightarrow  \| d\sigma^2 \| = \tfrac{1}{u^2}du$. 
+
+Then we get:
 
 $$
 \begin{aligned}
+	p(y^* \mid y)
 		&= \frac{b_N^{a_N}}{\Gamma(a_N)(2 \pi )^{p/2} | M_0 |^{1/2}}
 			\int
 			u^{a_N + 1 + p/2}
@@ -507,13 +508,11 @@ $$
 \end{aligned}
 $$
 
-<p style="text-align: right; color: grey;">
-(substituting with $v= Bu \Rightarrow du= B^{-1} dv$)
-</p>
+Now, defining $B := b_N + \frac{1}{2}(y^{\*} - X^{\*}\mu_N)^T M_0^{-1}(y^{\*}-X^{\*}\mu_N)$ for ease of writing, and once again doing integration by substitution by substituting with $v=Bu \Rightarrow du = B^{-1}dv$, we obtain:
 
 $$
 \begin{aligned}
-
+	p(y^* \mid y)
 		&= \frac{b_N^{a_N}}{\Gamma(a_N)(2 \pi )^{p/2} | M_0 |^{1/2}}
 			\int
 			\left(\frac{v}{B}\right)^{a_N + p/2 -1}
@@ -532,8 +531,19 @@ $$
 			\underbrace{\int
 			v^{(a_N + p/2) -1}
 
-			\exp \left[ - v \right] dv}_{= \Gamma(a_N + p/2)} \\
+			\exp \left[ - v \right] dv}_{\Gamma(a_N + p/2)} \\
 
+\end{aligned}
+$$
+
+We recognize the integral as the Gamma function $\Gamma(a_N + p/2)$. 
+
+Lastly, doing some final rearranging:
+
+$$
+\begin{aligned}
+
+	p(y^{\*} \mid y)
 		&= \frac{
 				b_N^{a_N} \Gamma(a_N + p/2)
 			}{
@@ -580,20 +590,16 @@ $$
 			}{
 				\Gamma(a_N)(2 \pi a_N)^{p/2} | \tfrac{b_N}{a_N} M_0  |^{1/2}
 			} 
-			\left( 1+ \frac{1}{2a_N}(y^* - X^*\mu_N)^T \left(\tfrac{b_N}{a_N} M_0 \right)^{-1}(y^*-X^*\mu_N) \right)^{-(a_N+p/2)}
+			\left( 1+ \frac{1}{2a_N}(y^* - X^*\mu_N)^T \left(\tfrac{b_N}{a_N} M_0 \right)^{-1}(y^*-X^*\mu_N) \right)^{-(a_N+p/2)},
 			\\
-
-		&= \text{Student-}t_{2a_N}(X^*\mu_N, \tfrac{b_N}{a_N}M_0) \\
-
-		&= \text{Student-}t_{2a_N}(X^*\mu_N, \tfrac{b_N}{a_N}(I + X^*\Lambda_N^{-1}X^{*T})).
 
 \end{aligned}
 $$
 
-So the posterior predictive is a multivariate Student’s $t$-distribution with:
-- Degrees of freedom: $2a_N$,
-- Mean: $X^*\mu_N$,
-- Covariance: $\tfrac{b_N}{a_N}(I + X^*\Lambda_N^{-1}X^{*T})$.
+we end up with a result that we recognize as a multivariate Student's $t$-distribution with:
+- degrees of freedom $2a_N$,
+- mean $X^{*}\mu_N$,
+- shape matrix $ \frac{b_N}{a_N} M_0 = \frac{b_N}{a_N} ( I + X^{*} \Lambda_N^{-1} X^{\*T}) $.
 
 ## Conclusion
 Given a Normal likelihood with conjugate Normal-inverse-gamma prior on $(\beta, \sigma^2)$:
@@ -622,14 +628,33 @@ $$
 The marginal likelihood integrates out both parameters:
 
 $$
-p(y \mid X) = \frac{(2\pi)^{-n/2} |\Lambda_0|^{1/2} \Gamma(a_N) b_0^{a_0}}{|\Lambda_N|^{1/2} \Gamma(a_0) b_N^{a_N}},
+p(y) = (2\pi)^{-n/2}\sqrt{
+	\frac{
+		|
+		\Lambda_0
+		|
+		}{
+		|
+		\Lambda_N
+		|
+		}}
+	\frac{
+		b_0^{a_0}
+		}{
+		b_N^{a_N}
+		}
+	\frac{
+		\Gamma(a_N)
+		}{
+		\Gamma(a_0)
+		}.,
 $$
 
-and the posterior predictive for new $X^*$ is:
+and the posterior predictive for new $y^{\*}$ given new $X^{\*}$ is:
 
 $$
-y^* \mid X^*, y \sim \text{Student-}t_{2a_N} \left( x^{*T} \mu_N,\ 
-\frac{b_N}{a_N} \left(1 + X^{*T} \Lambda_N^{-1} x^* \right) \right).
+y^* \mid X^*, y \sim \text{Student-}t_{2a_N} \left( X^{*} \mu_N,\ 
+\frac{b_N}{a_N} \left(1 + X^{*} \Lambda_N^{-1} X^* \right) \right).
 $$
 
 Conjugacy gives us full analytical tractability: posteriors, predictive distribution, and model evidence — all in closed form.
