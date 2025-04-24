@@ -557,7 +557,7 @@ Lastly, doing some final rearranging:
 $$
 \begin{aligned}
 
-	p(y^{\*} \mid y)
+	p(y^* \mid y)
 		&= \frac{
 				b_N^{a_N} \Gamma(a_N + p/2)
 			}{
