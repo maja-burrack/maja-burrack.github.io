@@ -337,7 +337,7 @@ $$
 
 This follows from the definition of a multivariate normal distribution with mean $\mu_N$ and covariance matrix $\Sigma^{-1}$. 
 
-Hence, integrating \eqref{eq:joint-lines} with respect to $\beta$ and plugging in \eqref{eq:beta-integral}, we get:
+Hence, integrating \eqref{eq:joint-lines} over $\beta$ and plugging in \eqref{eq:beta-integral}, we get:
 
 $$
 \begin{align}
