@@ -1,4 +1,4 @@
-<script type="text/javascript" id="MathJax-script" async
+<!-- <script type="text/javascript" id="MathJax-script" async
 src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
 </script>
 <script type="text/javascript" async>
@@ -11,5 +11,24 @@ MathJax = {
     fontCache: 'global'
   }
 };
+</script> -->
+
+<!-- FIRST: Configuration -->
+<script type="text/javascript">
+  window.MathJax = {
+    tex: {
+      tags: 'ams',
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    },
+    svg: {
+      fontCache: 'global'
+    }
+  };
+</script>
+
+<!-- THEN: Load MathJax -->
+<script type="text/javascript" id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
 </script>
 

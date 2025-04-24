@@ -57,6 +57,7 @@ kramdown:
 
 sass:
   style: compressed  # or expanded, depending on your preference
+  sass_dir: _sass
 
 
 plugins:
