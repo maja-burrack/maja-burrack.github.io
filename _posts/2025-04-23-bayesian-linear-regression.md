@@ -119,20 +119,18 @@ p(y \mid \beta, \sigma^2)p(\beta \mid \sigma^2)p(\sigma^2)
 \end{align}
 $$
 
-Collecting the exponents:
+Collecting the exponents, this is equal to:
 
 $$
-\begin{multline}
-p(y \mid \beta, \sigma^2)p(\beta \mid \sigma^2)p(\sigma^2) \\
-	= (2\pi\sigma^2)^{-n/2} (2\pi\sigma^2)^{-p/2}|\Lambda_0|^{1/2} \frac{b_0^{a_0}}{\Gamma(a_0)}(\sigma^2)^{-(a_0+1)}
-	\exp 
+\begin{align}
+(2\pi\sigma^2)^{-n/2} (2\pi\sigma^2)^{-p/2}|\Lambda_0|^{1/2} \frac{b_0^{a_0}}{\Gamma(a_0)}(\sigma^2)^{-(a_0+1)} \exp 
 	\left[ 
 		\frac{-1}{2\sigma^2} (y-X\beta)^T(y-X\beta)
 		-\frac{1}{2}(\beta-\mu_0)^T\Lambda_0(\beta-\mu_0) 
 		-\frac{b_0}{\sigma^2} 
-	\right] 
+	\right]
 \label{eq:joint-probability}
-\end{multline}
+\end{align}
 $$
 
 
@@ -240,23 +238,23 @@ where $\Lambda_N = X^TX + \Lambda_0$ and $\mu_N = \Lambda_N^{-1}(\mu_0^T\Lambda_
 Now we can go back to \eqref{eq:joint-probability} and rewrite the exponent as
 
 $$
-\begin{gathered}
+\begin{aligned}
 	\left[ -\frac{1}{2\sigma^2}(y-X\beta)^T(y-X\beta) - \frac{1}{2\sigma^2}(\beta-\mu_0)^T\Lambda_0(\beta-\mu_0) - \frac{b_0}{\sigma^2} \right]
 
-	= -\frac{1}{2\sigma^2}\left[ (y-X\beta)^T(y-X\beta) + (\beta-\mu_0)^T\Lambda_0(\beta-\mu_0)  + 2b_0\right] \\
+	&= -\frac{1}{2\sigma^2}\left[ (y-X\beta)^T(y-X\beta) + (\beta-\mu_0)^T\Lambda_0(\beta-\mu_0)  + 2b_0\right] \\
 
-	= -\frac{1}{2\sigma^2} \left[
+	&= -\frac{1}{2\sigma^2} \left[
 		(\beta -\mu_N)^T\Lambda_N(\beta-\mu_N)
 		+ y^Ty 
 		-\mu_N^T\Lambda_N\mu_N
 		+ \mu_0^T\Lambda_0\mu_0 
 		+ 2b_0 
 		\right] \\
-	= -\frac{1}{2\sigma^2} \left[
+	&= -\frac{1}{2\sigma^2} \left[
 		(\beta -\mu_N)^T\Lambda_N(\beta-\mu_N)
 		+ 2b_N
 		\right],
-\end{gathered}
+\end{aligned}
 $$
 
 where 
@@ -329,29 +327,29 @@ $$
 then we immediately know that 
 
 $$
-\begin{aligned}
+\begin{align}
 \int \exp \left[ -\frac{1}{2\sigma^2}(\beta -\mu_N)^T\Lambda_N(\beta-\mu_N)  \right] d\beta
 &= (2\pi)^{p/2}|\Sigma|^{1/2} \\
 &= (2\pi)^{p/2}|\sigma^2\Lambda_N^{-1}|^{1/2} \\
-&= (2\pi\sigma^2)^{p/2}|\Lambda_N|^{-1/2}.
-\end{aligned}
+&= (2\pi\sigma^2)^{p/2}|\Lambda_N|^{-1/2}.\label{eq:beta-integral}
+\end{align}
 $$
 
 This follows from the definition of a multivariate normal distribution with mean $\mu_N$ and covariance matrix $\Sigma^{-1}$. 
 
-Hence
+Hence, integrating \eqref{eq:joint-lines} with respect to $\beta$ and plugging in \eqref{eq:beta-integral}, we get:
 
 $$
 \begin{align}
 \int p(y, \beta, \sigma^2) d\beta 
-	&= (2\pi\sigma^2)^{-p/2}|\Lambda_0|^{1/2}(2\pi\sigma^2)^{p/2}|\Lambda_N|^{-1/2}  \\
-		&\times (\sigma^2)^{-(a_0+n/2+1)}\exp \left[ -\frac{b_N}{\sigma^2}\right] \\ 
-		&\times (2\pi)^{-n/2}\frac{b_0^{a_0}}{\Gamma (a_0)} \\
+	&= (2\pi\sigma^2)^{-p/2}|\Lambda_0|^{1/2}(2\pi\sigma^2)^{p/2}|\Lambda_N|^{-1/2} 
+		\times (\sigma^2)^{-(a_0+n/2+1)}\exp \left[ -\frac{b_N}{\sigma^2}\right] 
+		\times (2\pi)^{-n/2}\frac{b_0^{a_0}}{\Gamma (a_0)} \\
 
 	&= |\Lambda_0|^{1/2}
-	|\Lambda_N|^{-1/2}  \\
-		&\times (\sigma^2)^{-(a_0+n/2+1)}\exp \left[ -\frac{b_N}{\sigma^2}\right] \\ 
-		&\times (2\pi)^{-n/2}\frac{b_0^{a_0}}{\Gamma (a_0)}. \\
+	|\Lambda_N|^{-1/2} 
+		\times (\sigma^2)^{-(a_0+n/2+1)}\exp \left[ -\frac{b_N}{\sigma^2}\right] 
+		\times (2\pi)^{-n/2}\frac{b_0^{a_0}}{\Gamma (a_0)}. \\
 \end{align}
 $$
 
