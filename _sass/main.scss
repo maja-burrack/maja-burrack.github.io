@@ -1,3 +1,13 @@
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Makes sure the body takes up at least the full height of the viewport */
+}
 
 .minimalist-table {
   width: 100%;
@@ -16,9 +26,12 @@
 }
 
 .custom-container {
+  flex: 1;
+  overflow: auto;
   max-width: 900px;
   width: 100%; /* Adjust max-width as needed */
   margin: 0 auto; /* Center the container */
+  padding-top: 1.5rem
 }
 
 .post-container {
@@ -84,7 +97,7 @@
 }
 
 .archive-title {
-  color: #212529;
+  color: #000000;
   // text-decoration: none;
   font-weight:bold;
   font-size: larger;
@@ -101,7 +114,6 @@
   font-size:small
 }
 
-
 .post-subtitle {
   font-weight: normal;
   font-size: smaller;
@@ -110,12 +122,14 @@
 
 .footer-container {
   text-align: center;
+  margin-top: auto
 }
 
 .footer-icons {
   width: 1.25rem;
   height: 1.25rem;
   margin-right: 0.5rem;
+  // margin-bottom: 20px;
 }
 
 .footer-icon-links {
@@ -147,29 +161,29 @@ pre.highlight {
   margin-right: 0.25rem !important;
 }
 
-@media (prefers-color-scheme: dark) {
-  .footer-icon-links {
-    text-decoration: none;
-    color: #e1e1e1;
-  }
+// @media (prefers-color-scheme: dark) {
+//   .footer-icon-links {
+//     text-decoration: none;
+//     color: #e1e1e1;
+//   }
 
-  .footer-icon-links:hover,
-  .footer-icon-links:focus {
-    text-decoration: none;
-    color: #e1e1e1;
-  }
+//   .footer-icon-links:hover,
+//   .footer-icon-links:focus {
+//     text-decoration: none;
+//     color: #e1e1e1;
+//   }
 
-  .archive-title {
-    color: #e1e1e1;
-  }
+//   .archive-title {
+//     color: #e1e1e1;
+//   }
 
-  .light-avatar {
-    display: none !important;
-  }
-  .dark-avatar {
-    display: inline-block !important;
-  }
-}
+//   .light-avatar {
+//     display: none !important;
+//   }
+//   .dark-avatar {
+//     display: inline-block !important;
+//   }
+// }
 
 blockquote {
   border: 1px solid black;
@@ -179,13 +193,13 @@ blockquote {
   margin: 1.5rem 0;
 }
 
-/* In dark mode, override the border color */
-@media (prefers-color-scheme: dark) {
-  blockquote {
-    border: 1px solid white;
-    color: #e1e1e1;
-  }
-}
+// /* In dark mode, override the border color */
+// @media (prefers-color-scheme: dark) {
+//   blockquote {
+//     border: 1px solid white;
+//     color: #e1e1e1;
+//   }
+// }
 
 .mathjax-scrollable {
   overflow-x: auto;  /* Enables horizontal scrolling */
