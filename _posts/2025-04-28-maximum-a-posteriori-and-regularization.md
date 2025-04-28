@@ -1,10 +1,10 @@
 ---
 layout: post
-title: Maximum a posteriori
-subtitle:
+title: Maximum a Posteriori and Regularization
+subtitle: I derive the maximum a posteriori (MAP) estimator and show how, under different prior choices, MAP estimation leads naturally to L2-regularization (Ridge regression) with a normal prior and L1-regularization (LASSO regression) with a Laplace prior.
 ---
 
-In Bayesian inference, we consider parameters to be random variables and data to be fixed. This is in stark contrast to classical (Frequentist) statistics where data is considered random and the parameters fixed. When we perform [Bayesian inference]({{site.baseurl}}/blog/bayesian-inference) , we estimate a probability distribution for each parameter, rather than a single number. However, sometimes we might be interested in a just one number, so how should be define this number? A common choice is the value that maximizes the posterior. This estimator is called the *maximum a posteriori (MAP)*-estimator:
+In Bayesian inference, we consider parameters to be random variables and data to be fixed. This is in stark contrast to classical (Frequentist) statistics where data is considered random and the parameters fixed. When we perform [Bayesian inference]({{site.baseurl}}/blog/bayesian-inference), we estimate a probability distribution for each parameter, rather than a single number. However, sometimes we might be interested in just one number, so how should we define this number? A common choice is the value that maximizes the posterior. This estimator is called the *maximum a posteriori (MAP)*-estimator:
 
 $$
 \begin{align}
@@ -30,7 +30,8 @@ The MAP-estimator is similar, but different to the (Frequentist) maximum likelih
 
 $$
 \begin{align}
-\hat{\theta}_{\text{MLE}} &= \underset{\theta}{\arg \max} \left \{ p(y \mid \theta ) \right \}.
+\hat{\theta}_{\text{MLE}} &= \underset{\theta}{\arg \max} \left \{ p(y \mid \theta ) \right \}\\
+    &= \underset{\theta}{\arg \max} \left \{ \log p(y \mid \theta) \right \}\label{7}.
 \end{align}$$
 
 If we consider a standard linear regression formulation
@@ -67,14 +68,18 @@ $$
 \end{align}
 $$
 
+Note that if we choose a uniform prior, then the MAP is equal to the MLE. This follows easily if we set $p(\theta) =1$ and then compare \eqref{7} and \eqref{3}.
+
 ## Maximum a posteriori with normal prior
-To obtain an MAP estimate of $\beta$, we need to choose a prior. The choices are many, but if we choose a normal prior for *each* $\beta_j$ with identical variance $\tau^2$
+To obtain a MAP estimate of $\beta$, we need to choose a prior. The choices are many, but if we choose a normal prior for *each* $\beta_j$ with identical variance $\tau^2$
 
 $$
+\begin{equation}
 p(\beta) = \prod_{j=1}^{p} \frac{1}{\sqrt{2 \pi \tau^2}} \exp \left[ \frac{-\beta_j^2}{2\tau^2}\right]
+\end{equation}
 $$
 
-then we obtain the following MAP:
+then the resulting MAP estimate solves the following optimization problem:
 
 $$
 \begin{align}
@@ -105,20 +110,20 @@ $$
 
     &= \underset{\beta}{\arg \min} \left \{ 
              \sum_{i=1}^{n} (y_i- \beta^T \mathbf{x_i})^2
-                +  \lambda \sum_{j=1}^p \beta_{j}^2
+                +  \lambda_1 \sum_{j=1}^p \beta_{j}^2
         \right \} \\
         
     &= \underset{\beta}{\arg \min} \left \{ 
              \sum_{i=1}^{n} (y_i- \beta^T \mathbf{x_i})^2
-                +  \lambda \lVert \beta \lVert_2^2
+                +  \lambda_1 \lVert \beta \rVert_2^2
         \right \},
 \end{align}
 $$
 
-where $\lambda = \frac{\sigma^2}{\tau^2}$ and $\lVert \cdot \lVert_2$ denotes the L2-norm. We recognize this a L2-regularization (also called Ridge regression in this context), which penalizes very large coefficients $\beta_j$. 
+where $\lambda_1 = \frac{\sigma^2}{\tau^2}$ and $\lVert \cdot \rVert_2$ denotes the L2-norm. We recognize this as L2-regularization (also called Ridge regression in this context), which penalizes very large coefficients $\beta_j$. Here, $\lambda_1$ acts as a hyperparameter that controls the trade-off between fitting the data well and keeping the parameter values small.
 
 ## Maximum a posteriori with Laplace prior
-Say we choose a Laplace prior for each $\beta_j$ with same location $\mu=0$ and scale $b$ for each, then
+Say we choose a [Laplace distribution](https://en.wikipedia.org/wiki/Laplace_distribution) as prior for each $\beta_j$ with same location parameter $\mu=0$ and scale parameter $b$ for each, then
 
 $$
 \begin{align}
@@ -160,12 +165,14 @@ $$
 
     &= \underset{\beta}{\arg \min} \left \{ 
         \sum_{i=1}^{n} (y_i- \beta^T \mathbf{x_i})^2 
-        + \lambda \lVert \beta \lVert_1
+        + \lambda_2 \lVert \beta \rVert_1
         \right \}, \\ 
 
 \end{align}
 $$
 
-where $\lambda=\frac{2\sigma^2}{b}$ and $\lVert \cdot \lVert_1$ denotes the L1-norm. As above, we recognize this as a specific type of regularization, namely L1-regularization (also called LASSO regression in this context), which promotes sparsity in $\beta$.
+where $\lambda_2=\frac{2\sigma^2}{b}$ and $\lVert \cdot \rVert_1$ denotes the L1-norm. As above, we recognize this as a specific type of regularization, namely L1-regularization (also called LASSO regression in this context), which promotes sparsity in $\beta$. Again, $\lambda_2$ serves as a regularization strength, balancing the model's fit to the data against promoting sparsity in the coefficients.
+
 
 ## Conclusion
+In summary, the maximum a posteriori (MAP) estimator is a natural Bayesian alternative to the Frequentist maximum likelihood estimator (MLE). When combined with different priors, such as normal or Laplace distributions, the MAP leads directly to well-known regularization techniques like Ridge and LASSO regression. This highlights that regularization can be interpreted as introducing prior information about the parameters into the model.
