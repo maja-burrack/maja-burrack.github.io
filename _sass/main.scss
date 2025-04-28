@@ -84,7 +84,7 @@
 }
 
 .archive-title {
-  color: #212529;
+  color: #000000;
   // text-decoration: none;
   font-weight:bold;
   font-size: larger;
@@ -147,29 +147,29 @@ pre.highlight {
   margin-right: 0.25rem !important;
 }
 
-@media (prefers-color-scheme: dark) {
-  .footer-icon-links {
-    text-decoration: none;
-    color: #e1e1e1;
-  }
+// @media (prefers-color-scheme: dark) {
+//   .footer-icon-links {
+//     text-decoration: none;
+//     color: #e1e1e1;
+//   }
 
-  .footer-icon-links:hover,
-  .footer-icon-links:focus {
-    text-decoration: none;
-    color: #e1e1e1;
-  }
+//   .footer-icon-links:hover,
+//   .footer-icon-links:focus {
+//     text-decoration: none;
+//     color: #e1e1e1;
+//   }
 
-  .archive-title {
-    color: #e1e1e1;
-  }
+//   .archive-title {
+//     color: #e1e1e1;
+//   }
 
-  .light-avatar {
-    display: none !important;
-  }
-  .dark-avatar {
-    display: inline-block !important;
-  }
-}
+//   .light-avatar {
+//     display: none !important;
+//   }
+//   .dark-avatar {
+//     display: inline-block !important;
+//   }
+// }
 
 blockquote {
   border: 1px solid black;
@@ -179,13 +179,13 @@ blockquote {
   margin: 1.5rem 0;
 }
 
-/* In dark mode, override the border color */
-@media (prefers-color-scheme: dark) {
-  blockquote {
-    border: 1px solid white;
-    color: #e1e1e1;
-  }
-}
+// /* In dark mode, override the border color */
+// @media (prefers-color-scheme: dark) {
+//   blockquote {
+//     border: 1px solid white;
+//     color: #e1e1e1;
+//   }
+// }
 
 .mathjax-scrollable {
   overflow-x: auto;  /* Enables horizontal scrolling */
