@@ -30,7 +30,7 @@ The MAP-estimator is similar, but different to the (Frequentist) maximum likelih
 
 $$
 \begin{align}
-\hat{\theta}_{\text{MLE}} &= \underset{\theta}{\arg \max} \left \{ p(y \mid \theta ) \right \}\\
+\hat{\theta}_{\text{MLE}} &:= \underset{\theta}{\arg \max} \left \{ p(y \mid \theta ) \right \}\\
     &= \underset{\theta}{\arg \max} \left \{ \log p(y \mid \theta) \right \}\label{7}.
 \end{align}$$
 
