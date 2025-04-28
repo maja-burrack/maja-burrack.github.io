@@ -1,3 +1,13 @@
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Makes sure the body takes up at least the full height of the viewport */
+}
 
 .minimalist-table {
   width: 100%;
@@ -16,9 +26,12 @@
 }
 
 .custom-container {
+  flex: 1;
+  overflow: auto;
   max-width: 900px;
   width: 100%; /* Adjust max-width as needed */
   margin: 0 auto; /* Center the container */
+  padding-top: 1.5rem
 }
 
 .post-container {
@@ -101,7 +114,6 @@
   font-size:small
 }
 
-
 .post-subtitle {
   font-weight: normal;
   font-size: smaller;
@@ -110,12 +122,14 @@
 
 .footer-container {
   text-align: center;
+  margin-top: auto
 }
 
 .footer-icons {
   width: 1.25rem;
   height: 1.25rem;
   margin-right: 0.5rem;
+  // margin-bottom: 20px;
 }
 
 .footer-icon-links {
