@@ -389,32 +389,32 @@ $$
 Thus, we have shown that the posterior $p(\beta, \sigma^2 \mid y)$ has a closed form solution under our choice of prior. Generally, the evidence does not have closed form and we would usually have to use approximation methods to compute it. 
 
 ## Posterior predictive
-Let's also compute the posterior predictive $p(y^* \mid y)$ given by
+Let's also compute the posterior predictive $p(y^\ast  \mid y)$ given by
 
 $$
 \begin{align}
-p(y^* \mid y)  
-	&= \int \int p(y^* \mid X^*, \beta, \sigma^2) p(\beta, \sigma^2 \mid y) d\beta d\sigma^2 \\
+p(y^\ast  \mid y)  
+	&= \int \int p(y^\ast  \mid X^\ast , \beta, \sigma^2) p(\beta, \sigma^2 \mid y) d\beta d\sigma^2 \\
 	
-	&= \int \int p(y^* \mid X^*, \beta, \sigma^2) p(\beta \mid \sigma^2, y) p(\sigma^2 \mid y) d\beta d\sigma^2 \\
+	&= \int \int p(y^\ast  \mid X^\ast , \beta, \sigma^2) p(\beta \mid \sigma^2, y) p(\sigma^2 \mid y) d\beta d\sigma^2 \\
 &= \int \underbrace{\left[ 
-		\int p(y^* \mid X^*, \beta, \sigma^2) p(\beta \mid \sigma^2, y) d\beta
-	\right]}_{p(y^* \mid \sigma^2, y)}
+		\int p(y^\ast  \mid X^\ast , \beta, \sigma^2) p(\beta \mid \sigma^2, y) d\beta
+	\right]}_{p(y^\ast  \mid \sigma^2, y)}
 	p(\sigma^2 \mid y) d\sigma^2.
 \end{align}
 $$
 
-I have included $X^*$ in the formula to make it clear that the posterior predictive depends on *new data points* $X^*$. The posterior predictive answers the question:
+I have included $X^\ast $ in the formula to make it clear that the posterior predictive depends on *new data points* $X^\ast $. The posterior predictive answers the question:
 
 <p style="text-align: center; font-style: italic;">
-  Given the data I've seen, and my prior beliefs, what is the distribution over new outputs $y^*$, at a new inputs $X^*$?
+  Given the data I've seen, and my prior beliefs, what is the distribution over new outputs $y^\ast $, at a new inputs $X^\ast $?
 </p>
 
 Let's start by computing the inner integral:
 
 $$
-\int p(y^* \mid X^*, \beta, \sigma^2) p(\beta \mid \sigma^2, y) d\beta
-	= \int \mathcal{N}(y^* \mid X^*\beta, \sigma^2 I) \mathcal{N}(\beta \mid \mu_N, \sigma^2 \Lambda_N^{-1}) d\beta.
+\int p(y^\ast  \mid X^\ast , \beta, \sigma^2) p(\beta \mid \sigma^2, y) d\beta
+	= \int \mathcal{N}(y^\ast  \mid X^\ast \beta, \sigma^2 I) \mathcal{N}(\beta \mid \mu_N, \sigma^2 \Lambda_N^{-1}) d\beta.
 $$
 
 We can compute this without directly integrating it by using well-known a theorem[^1]:
@@ -427,37 +427,37 @@ We can compute this without directly integrating it by using well-known a theore
 >- the marginal distribution of $z_b$ is $z_b \sim \mathcal{N}(\mu_b, \Sigma_{bb})$, and
 >- the conditional distribution of $z_b$ given $z_a$ is $$z_b \mid z_a \sim \mathcal{N}(\mu_b + \Sigma_{ba}\Sigma_{aa}^{-1}(z_a-\mu_a), \Sigma_{bb}-\Sigma_{ba}\Sigma_{aa}^{-1}\Sigma_{ab})$$
 
-We can apply this theorem by constructing $z=(\beta, y^*)$,  with $\mu = (\mu_{N}, X^*\mu_{N})$, and
+We can apply this theorem by constructing $z=(\beta, y^\ast )$,  with $\mu = (\mu_{N}, X^{\ast }\mu_{N})$, and
 
 $$
 \Sigma = \begin{bmatrix}
-	\Sigma_{\beta\beta} & \Sigma_{\beta y^*} \\
-	\Sigma_{y^* \beta} & \Sigma_{y^*y^*}
+	\Sigma_{\beta\beta} & \Sigma_{\beta y^\ast } \\
+	\Sigma_{y^\ast  \beta} & \Sigma_{y^\ast  y^\ast }
 \end{bmatrix} =
 \begin{bmatrix}
-	\sigma^2 \Lambda_N^{-1} & \sigma^2\Lambda_N^{-1}X^{*T} \\
-	\sigma^2 X^*\Lambda_N^{-1} & \sigma^2(I+X^*\Lambda_N^{-1}X^{*T})
+	\sigma^2 \Lambda_N^{-1} & \sigma^2\Lambda_N^{-1}X^{\ast T} \\
+	\sigma^2 X^\ast \Lambda_N^{-1} & \sigma^2(I+X^\ast \Lambda_N^{-1}X^{\ast T})
 \end{bmatrix}.
 $$
 
-Then it follows from the theorem that $\beta \sim \mathcal{N}(\mu_N, \sigma^2\Lambda_N^{-1})$,  $y^* \sim \mathcal{N}(X^*\mu_N, \sigma^2(I+X^*\Lambda_N^{-1}X^{*T}))$, and 
+Then it follows from the theorem that $\beta \sim \mathcal{N}(\mu_N, \sigma^2\Lambda_N^{-1})$,  $y^\ast  \sim \mathcal{N}(X^\ast \mu_N, \sigma^2(I+X^\ast \Lambda_N^{-1}X^{\ast T}))$, and 
 
 $$
-y^* \mid \beta \sim \mathcal{N}(\mu_{y^*\mid \beta}, \Sigma_{y^* \mid \beta}),
+y^\ast  \mid \beta \sim \mathcal{N}(\mu_{y^\ast \mid \beta}, \Sigma_{y^\ast  \mid \beta}),
 $$
 
 where
 
 $$
 \begin{aligned}
-\mu_{y^* \mid \beta} 
-	&= X^*\mu_N + \sigma^2 X^*\Lambda_N^{-1}(\sigma^2\Lambda_N^{-1})^{-1}(\beta-\mu_N), \\
-	&= X^*\mu_N + X^*(\beta - \mu_N) \\
-	&= X^*\beta, \\ \\
+\mu_{y^\ast  \mid \beta} 
+	&= X^\ast \mu_N + \sigma^2 X^\ast \Lambda_N^{-1}(\sigma^2\Lambda_N^{-1})^{-1}(\beta-\mu_N), \\
+	&= X^\ast \mu_N + X^\ast (\beta - \mu_N) \\
+	&= X^\ast \beta, \\ \\
 
-\Sigma_{y^*\mid \beta} 
-	&= \sigma^2(I+X^*\Lambda_N^{-1}X^{*T})-\sigma^2X^*\Lambda_N^{-1}(\sigma^2\Lambda_N^{-1})^{-1}\sigma^2\Lambda_N^{-1}X^{*T} \\
-	&= \sigma^2 (I+X^*\Lambda_N^{-1}X^{*T})-\sigma^2X^*\Lambda_N^{-1}X^{*T} \\
+\Sigma_{y^\ast \mid \beta} 
+	&= \sigma^2(I+X^\ast \Lambda_N^{-1}X^{\ast T})-\sigma^2X^\ast \Lambda_N^{-1}(\sigma^2\Lambda_N^{-1})^{-1}\sigma^2\Lambda_N^{-1}X^{\ast T} \\
+	&= \sigma^2 (I+X^\ast \Lambda_N^{-1}X^{\ast T})-\sigma^2X^\ast \Lambda_N^{-1}X^{\ast T} \\
 	&= \sigma^2I.
 
 \end{aligned}
@@ -467,10 +467,10 @@ Notice that we have constructed $z$ in such a way that it is immediately apparen
 
 $$
 \begin{aligned}
-p(y^* \mid\sigma^2, y) 
-	&= \int p(y^* \mid X^*, \beta, \sigma^2) p(\beta \mid \sigma^2, y) d\beta \\
-	&= \int \mathcal{N}(y^* \mid X^*\beta, \sigma^2 I) \mathcal{N}(\beta \mid \mu_N, \sigma^2 \Lambda_N^{-1}) d\beta \\
-	&= \mathcal{N}(X^*\mu_N, \sigma^2(I+X^*\Lambda_N^{-1}X^{*T})). 
+p(y^\ast  \mid\sigma^2, y) 
+	&= \int p(y^\ast  \mid X^\ast , \beta, \sigma^2) p(\beta \mid \sigma^2, y) d\beta \\
+	&= \int \mathcal{N}(y^\ast  \mid X^\ast \beta, \sigma^2 I) \mathcal{N}(\beta \mid \mu_N, \sigma^2 \Lambda_N^{-1}) d\beta \\
+	&= \mathcal{N}(X^\ast \mu_N, \sigma^2(I+X^\ast \Lambda_N^{-1}X^{\ast T})). 
 \end{aligned}
 $$
 
@@ -478,20 +478,20 @@ Now computing the outer integral:
 
 $$
 \begin{aligned}
-	p(y^* \mid y)
-		&= \int \mathcal{N}(y^* \mid X^*\mu_N, \sigma^2(I+X^*\Lambda_N^{-1}X^{*T}))p(\sigma^2 \mid y) d\sigma^2 \\
+	p(y^\ast  \mid y)
+		&= \int \mathcal{N}(y^\ast  \mid X^\ast \mu_N, \sigma^2(I+X^\ast \Lambda_N^{-1}X^{\ast T}))p(\sigma^2 \mid y) d\sigma^2 \\
 
-		&= \int \mathcal{N}(y^* \mid X^*\mu_N, \sigma^2\underbrace{(I+X^*\Lambda_N^{-1}X^{*T})}_{M_0})\cdot \textrm{InvGamma}(\sigma^2 \mid a_n, b_n) d\sigma^2 \\
+		&= \int \mathcal{N}(y^\ast  \mid X^\ast \mu_N, \sigma^2\underbrace{(I+X^\ast \Lambda_N^{-1}X^{\ast T})}_{M_0})\cdot \textrm{InvGamma}(\sigma^2 \mid a_n, b_n) d\sigma^2 \\
 
 		&= \int (2 \pi \sigma^2)^{-p/2} | M_0|^{-1/2}
-			\exp \left[ -\frac{1}{2\sigma^2} (y^* - X^*\mu_N)^T M_0^{-1}(y^*-X^*\mu_N) \right]
+			\exp \left[ -\frac{1}{2\sigma^2} (y^\ast  - X^\ast \mu_N)^T M_0^{-1}(y^\ast -X^\ast \mu_N) \right]
 			\cdot \frac{b_N^{a_N}}{\Gamma (a_N)} (\sigma^2)^{-(a_N + 1)} \exp \left[ -\frac{b_N}{\sigma^2}\right] d\sigma^2 \\
 
 		&= \frac{b_N^{a_N}}{\Gamma(a_N)(2 \pi )^{p/2} | M_0 |^{1/2}}
 			\int 
 			(\sigma^2)^{-(a_N + 1 + p/2)}
 			
-			\exp \left[ -\frac{1}{2\sigma^2} \left( (y^* - X^*\mu_N)^T M_0^{-1}(y^*-X^*\mu_N) + 2b_N\right) \right] d\sigma^2.
+			\exp \left[ -\frac{1}{2\sigma^2} \left( (y^\ast  - X^\ast \mu_N)^T M_0^{-1}(y^\ast -X^\ast \mu_N) + 2b_N\right) \right] d\sigma^2.
 \end{aligned}
 $$
 
@@ -501,32 +501,32 @@ Then we get:
 
 $$
 \begin{aligned}
-	p(y^* \mid y)
+	p(y^\ast  \mid y)
 		&= \frac{b_N^{a_N}}{\Gamma(a_N)(2 \pi )^{p/2} | M_0 |^{1/2}}
 			\int
 			u^{a_N + 1 + p/2}
 
-			\exp \left[ -\frac{u}{2} \left( (y^* - X^*\mu_N)^T M_0^{-1}(y^*-X^*\mu_N) + 2b_N\right) \right] \frac{1}{u^2} du \\
+			\exp \left[ -\frac{u}{2} \left( (y^\ast  - X^\ast \mu_N)^T M_0^{-1}(y^\ast -X^\ast \mu_N) + 2b_N\right) \right] \frac{1}{u^2} du \\
 		
 		&= \frac{b_N^{a_N}}{\Gamma(a_N)(2 \pi )^{p/2} | M_0 |^{1/2}}
 			\int
 			u^{a_N - 1 + p/2}
 
-			\exp \left[ -\frac{u}{2} \left( (y^* - X^*\mu_N)^T M_0^{-1}(y^*-X^*\mu_N) + 2b_N\right) \right] du \\
+			\exp \left[ -\frac{u}{2} \left( (y^\ast  - X^\ast \mu_N)^T M_0^{-1}(y^\ast -X^\ast \mu_N) + 2b_N\right) \right] du \\
 		
 		&= \frac{b_N^{a_N}}{\Gamma(a_N)(2 \pi )^{p/2} | M_0 |^{1/2}}
 			\int
 			u^{a_N + p/2 -1}
 
-			\exp \left[ - \underbrace{\left( b_N + \frac{1}{2}(y^* - X^*\mu_N)^T M_0^{-1}(y^*-X^*\mu_N) \right)}_{B}u \right] du \\
+			\exp \left[ - \underbrace{\left( b_N + \frac{1}{2}(y^\ast  - X^\ast \mu_N)^T M_0^{-1}(y^\ast -X^\ast \mu_N) \right)}_{B}u \right] du \\
 \end{aligned}
 $$
 
-Now, defining $B := b_N + \frac{1}{2}(y^{\*} - X^{\*}\mu_N)^T M_0^{-1}(y^{\*}-X^{\*}\mu_N)$ for ease of writing, and once again doing integration by substitution by substituting with $v=Bu \Rightarrow du = B^{-1}dv$, we obtain:
+Now, defining $B := b_N + \frac{1}{2}(y^{\ast } - X^{\ast }\mu_N)^T M_0^{-1}(y^{\ast }-X^{\ast }\mu_N)$ for ease of writing, and once again doing integration by substitution by substituting with $v=Bu \Rightarrow du = B^{-1}dv$, we obtain:
 
 $$
 \begin{aligned}
-	p(y^* \mid y)
+	p(y^\ast  \mid y)
 		&= \frac{b_N^{a_N}}{\Gamma(a_N)(2 \pi )^{p/2} | M_0 |^{1/2}}
 			\int
 			\left(\frac{v}{B}\right)^{a_N + p/2 -1}
@@ -557,7 +557,7 @@ Lastly, doing some final rearranging:
 $$
 \begin{aligned}
 
-	p(y^* \mid y)
+	p(y^\ast  \mid y)
 		&= \frac{
 				b_N^{a_N} \Gamma(a_N + p/2)
 			}{
@@ -572,7 +572,7 @@ $$
 			}{
 				\Gamma(a_N)(2 \pi )^{p/2} | M_0 |^{1/2}
 			} 
-			\left( b_N + \frac{1}{2}(y^* - X^*\mu_N)^T M_0^{-1}(y^*-X^*\mu_N) \right)^{-(a_N+p/2)}
+			\left( b_N + \frac{1}{2}(y^\ast  - X^\ast \mu_N)^T M_0^{-1}(y^\ast -X^\ast \mu_N) \right)^{-(a_N+p/2)}
 			\\
 
 		&= \frac{
@@ -580,7 +580,7 @@ $$
 			}{
 				\Gamma(a_N)(2 \pi )^{p/2} | M_0 |^{1/2}
 			} 
-			\left( b_N(1 + \frac{1}{2b_N}(y^* - X^*\mu_N)^T M_0^{-1}(y^*-X^*\mu_N) ) \right)^{-(a_N+p/2)}
+			\left( b_N(1 + \frac{1}{2b_N}(y^\ast  - X^\ast \mu_N)^T M_0^{-1}(y^\ast -X^\ast \mu_N) ) \right)^{-(a_N+p/2)}
 			\\
 		
 		&= \frac{
@@ -588,7 +588,7 @@ $$
 			}{
 				\Gamma(a_N)(2 \pi)^{p/2} | M_0 |^{1/2}
 			} 
-			\left( 1+ \frac{1}{2a_N}(y^* - X^*\mu_N)^T \left(\tfrac{b_N}{a_N} M_0 \right)^{-1}(y^*-X^*\mu_N) \right)^{-(a_N+p/2)}
+			\left( 1+ \frac{1}{2a_N}(y^\ast  - X^\ast \mu_N)^T \left(\tfrac{b_N}{a_N} M_0 \right)^{-1}(y^\ast -X^\ast \mu_N) \right)^{-(a_N+p/2)}
 			\\
 
 		&= \frac{
@@ -596,7 +596,7 @@ $$
 			}{
 				\Gamma(a_N)(2 \pi)^{p/2} | M_0 |^{1/2}
 			} 
-			\left( 1+ \frac{1}{2a_N}(y^* - X^*\mu_N)^T \left(\tfrac{b_N}{a_N} M_0 \right)^{-1}(y^*-X^*\mu_N) \right)^{-(a_N+p/2)}
+			\left( 1+ \frac{1}{2a_N}(y^\ast  - X^\ast \mu_N)^T \left(\tfrac{b_N}{a_N} M_0 \right)^{-1}(y^\ast -X^\ast \mu_N) \right)^{-(a_N+p/2)}
 			\\
 
 		&= \frac{
@@ -604,7 +604,7 @@ $$
 			}{
 				\Gamma(a_N)(2 \pi a_N)^{p/2} | \tfrac{b_N}{a_N} M_0  |^{1/2}
 			} 
-			\left( 1+ \frac{1}{2a_N}(y^* - X^*\mu_N)^T \left(\tfrac{b_N}{a_N} M_0 \right)^{-1}(y^*-X^*\mu_N) \right)^{-(a_N+p/2)},
+			\left( 1+ \frac{1}{2a_N}(y^\ast  - X^\ast \mu_N)^T \left(\tfrac{b_N}{a_N} M_0 \right)^{-1}(y^\ast -X^\ast \mu_N) \right)^{-(a_N+p/2)},
 			\\
 
 \end{aligned}
@@ -612,8 +612,8 @@ $$
 
 we end up with a result that we recognize as a multivariate Student's $t$-distribution with:
 - degrees of freedom $2a_N$,
-- mean $X^{*}\mu_N$,
-- shape matrix $ \frac{b_N}{a_N} M_0 = \frac{b_N}{a_N} ( I + X^{*} \Lambda_N^{-1} X^{\*T}) $.
+- mean $X^{\ast }\mu_N$,
+- shape matrix $ \frac{b_N}{a_N} M_0 = \frac{b_N}{a_N} ( I + X^{\ast } \Lambda_N^{-1} X^{\ast T}) $.
 
 ## Conclusion
 Given a Normal likelihood with conjugate Normal-inverse-gamma prior on $(\beta, \sigma^2)$:
@@ -664,11 +664,11 @@ p(y) = (2\pi)^{-n/2}\sqrt{
 		}.,
 $$
 
-and the posterior predictive for new $y^{\*}$ given new $X^{\*}$ is:
+and the posterior predictive for new $y^{\ast}$ given new $X^{\ast}$ is:
 
 $$
-y^* \mid X^*, y \sim \text{Student-}t_{2a_N} \left( X^{*} \mu_N,\ 
-\frac{b_N}{a_N} \left(1 + X^{*} \Lambda_N^{-1} X^* \right) \right).
+y^\ast  \mid X^\ast , y \sim \text{Student-}t_{2a_N} \left( X^{\ast } \mu_N,\ 
+\frac{b_N}{a_N} \left(1 + X^{\ast } \Lambda_N^{-1} X^\ast  \right) \right).
 $$
 
 Conjugacy gives us full analytical tractability: posteriors, predictive distribution, and model evidence — all in closed form.
