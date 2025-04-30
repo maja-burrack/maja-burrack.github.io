@@ -23,10 +23,5 @@
     <!-- JavaScript for figure numbering (if necessary) -->
     <script src="{{ '/assets/js/figure-numbers.js' | relative_url }}"></script>
 
-    <!-- Google Analytics (conditionally loaded for production environment) -->
-    {% if jekyll.environment == 'production' and site.google_analytics %}
-      {% include google-analytics.html %}
-    {% endif %}
-  
   </body>
 </html>
