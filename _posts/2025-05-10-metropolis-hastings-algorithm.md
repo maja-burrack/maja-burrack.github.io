@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Metropolis-Hastings Algorithm
-subtitle: Anintroduction to the Metropolis-Hastings algorithm, one of the core methods behind Bayesian inference via MCMC. I explore how it works, why it works, and how to implement it — with references for further learning.
+subtitle: An introduction to the Metropolis-Hastings algorithm, one of the core methods behind Bayesian inference via MCMC. I explore how it works, why it works, and how to implement it — with references for further learning.
 ---
 
 I've been doing a bit of a deep-dive into Bayesian statistics recently; mainly focusing on the basic theory that sometimes gets brushed over or assumed as known facts when learning how to use specific libraries or tools for doing Bayesian statistics (personally, I have been fiddling with the python library [PyMC](https://pymc.org)). 
