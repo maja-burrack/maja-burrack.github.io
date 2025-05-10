@@ -1,12 +1,14 @@
 ---
 layout: post
 title: Metropolis-Hastings Algorithm
-subtitle: 
+subtitle: Anintroduction to the Metropolis-Hastings algorithm, one of the core methods behind Bayesian inference via MCMC. I explore how it works, why it works, and how to implement it — with references for further learning.
 ---
 
-The Metropolis-Hastings (MH) algorithm is a popular [Markov Chain Monte Carlo (MCMC)](https://en.wikipedia.org/wiki/Markov_chain_Monte_Carlo) method for sampling from any probability distribution. It's especially useful when we can't sample from the distribution directly, which is often the case in Bayesian statistics, when we want to sample from a posterior distribution. I have [previously shown]({{site.baseurl}}/blog/bayesian-linear-regression) that we can obtain the posterior of a linear regression model analytically under a specific choice of prior, but even so, it requires a lot of (tedious) work to obtain the closed form expressions. With the Metropolis-Hastings algorithm, we can sample from the posterior under *any* choice of prior. It also works for models more complicated than linear regression.
+I've been doing a bit of a deep-dive into Bayesian statistics recently; mainly focusing on the basic theory that sometimes gets brushed over or assumed as known facts when learning how to use specific libraries or tools for doing Bayesian statistics (personally, I have been fiddling with the python library [PyMC](https://pymc.org)). 
 
-The algorithm works by constructing a Markov chain, i.e. a sequence of samples $(x_1, x_2, ..., x_n)$, whose distribution converges to the target distribution $p(x)$ as $n \to \infty$. There are many ways to construct such sequences, but Metropolis-Hastings is one of the most popular and relatively simple methods. 
+I have [previously shown]({{site.baseurl}}/blog/bayesian-linear-regression) that we can obtain the posterior of a linear regression model analytically under a specific choice of prior (a so-called *conjugate prior*), but even so, it requires a lot of (tedious) work to obtain the closed form expressions. This can be fine for a simple model, where the "good" priors to use are known, but what if we want to fit a more complex model, where the conjugate prior is unknown or non-existent, or what if we have good reason to want to use a prior that isn't conjugate? Fortunately, we can sample from arbitrary probability distributions using computational methods. One of these is by using [Markov Chain Monte Carlo (MCMC)](https://en.wikipedia.org/wiki/Markov_chain_Monte_Carlo) methods, which is the rabbit-hole I am currently in. It isn't the only way to sample (or sometimes approximate) a probability distribution, but it is one of the most popular ones.
+
+The libraries I have looked at all use MCMC methods to sample from the posterior (read: fit the model), so in order to better understand how these libraries work, let us have a closer look at one of those methods: the Metropolis-Hastings algorithm. The algorithm works by constructing a Markov chain, i.e., a sequence of samples $(x_1, x_2, ..., x_n)$, whose distribution converges to the target distribution $p(x)$ as $n \to \infty$. There are many ways to construct such sequences, but Metropolis-Hastings is one of the most popular and relatively simple methods. 
 
 ## How it works
 Let $p(x)$ be the target distribution we want to sample from. Then to construct the sequence, proceed as follows:
@@ -58,13 +60,13 @@ Let $p(x)$ be the target distribution we want to sample from. Then to construct 
 
 In very few words: if the current state of the sequence is $x_t$, then we accept a candidate state $x^\ast \sim q(x^\ast \mid x_t)$ with probability $A(x^\ast, x_t).$ If we reject the candidate state, we simply retain the current state for the next step in the sequence.
 
-Remark: Since we use the **ratio** of the target distribution in the acceptance step, any normalizing factor cancels out, so we don’t need to be able to sample from the target distribution directly. A function proportional to the target distribution will do, and this is one of the strengths of the algorithm.
+**Remark**: Because the acceptance probability involves a ratio of the target distribution values, any normalizing factor cancels out, so we don’t need to be able to sample from the target distribution directly. A function proportional to the target distribution will do, and this is one of the strengths of the algorithm.
 
 ## Why it works
 The algorithm works because the sequence $x_1, x_2, ...$ converges to the target distribution $p(x)$, as noted earlier. But why does it converge to the target distribution? The proof has two steps:
 
 1. Show that the Markov chain has a unique stationary distribution $\pi(x)$.
-2. Show that $\pi(x) = p(x)$, i.e. the unique stationary distribution equals the target distribution.
+2. Show that $\pi(x) = p(x)$, i.e., the unique stationary distribution equals the target distribution.
 
 Markov chains are fully characterized by a transition probability $P(x^\ast \mid x)$ (or a transition matrix $P$ in the discrete case) that encodes the probability of transitioning from one state $x$ to another state $x^\ast$. For the first step, we will use some properties of Markov chains:
 
@@ -87,7 +89,7 @@ $$\begin{equation}
 \frac{A(x^\ast, x)}{A(x, x^\ast)} = \frac{p(x^\ast)q(x \mid x^\ast )}{p(x) q(x^\ast \mid x)}. \label{eq:detailed-balance-acceptance}
 \end{equation}$$
 
-Now refer back to the definition \eqref{eq:acceptance} of the acceptance probability to see that \eqref{eq:detailed-balance-acceptance} holds. By construction, either $A(x^\ast, x)$ or $A(x, x^\ast)$ must be equal to 1. If $A(x, x^\ast) = 1$, then we must have that $p(x^\ast)q(x \mid x^\ast) \leq p(x)q(x^\ast \mid x)$, by definition of $A(x, x^\ast)$, and hence 
+Now refer back to the definition \eqref{eq:acceptance} of the acceptance probability to see that \eqref{eq:detailed-balance-acceptance} holds: by construction, either $A(x^\ast, x)$ or $A(x, x^\ast)$ must be equal to 1. If $A(x, x^\ast) = 1$, then we must have that $p(x^\ast)q(x \mid x^\ast) \leq p(x)q(x^\ast \mid x)$, by definition of $A(x, x^\ast)$, and hence 
 
 $$ \frac{A(x^\ast, x)}{A(x, x^\ast)} = A(x^\ast, x) = \min \left(1,\frac{p(x^\ast)q(x \mid x^\ast)}{p(x)q(x^\ast \mid x)} \right), $$
 
@@ -99,7 +101,27 @@ when $p(x^\ast)q(x \mid x^\ast) \leq p(x)q(x^\ast \mid x)$. Similarly for the ca
 
 In conclusion, **detailed balance holds by construction,** and so $p(x)$ is stationary distribution.
 
-To ensure that $p(x)$ is the *unique* stationary distribution (i.e., that the chain converges to it from any starting point), the Markov chain must be irreducible and aperiodic. This comes down to our choice of proposal distribution and there are many choices that would fulfill these requirements. The latter condition holds for a random walk on any proper distribution, except for trivial exceptions, while irreducibility holds as long as we choose a proposal distribution that is able to (eventually) jump to any state[^BDA3]. In practice, we assess convergence of the Markov chain using trace plots, autocorrelation diagnostics, or other convergence metrics (more on this later).
+To ensure that $p(x)$ is the *unique* stationary distribution (i.e., that the chain converges to it from any starting point), the Markov chain must be irreducible and aperiodic[^1] (some sources will thrown the word "ergodic" around instead). This comes down to our choice of proposal distribution and there are many choices that would fulfill these requirements. The latter condition holds for a random walk on any proper distribution, except for trivial exceptions, while irreducibility holds as long as we choose a proposal distribution that is able to (eventually) jump to any state {% cite BDA3 -l 279 %}. 
 
+Also, it isn't immediately obvious how many iterations we would need before the chain converges. If we set $n$ too small, the sequence won't converge, but if we set $n$ too high, we will run out of time (or computing resources) before it happens. Similarly, if the parameter space is explored too slowly (i.e., with overly small proposal steps), the chain may fail to converge., we won't obtain a converging sequence. In practice, we assess convergence of the Markov chain using trace plots, autocorrelation diagnostics, or other convergence metrics (outside the scope of this post). Most implementations also use some strategies (e.g. discarding the first parts of the sequence, often called *warm-up*) to aid convergence. See {% cite BDA3 -l 281-4 %} for a brief discussion of some of these strategies.
+
+## Implementation
+I wrote a quick little python implementation:
+```python
+{% include code/metropolis-hastings.py %}
+```
+You can find many examples of how to implement the algorithm online, including some toy examples where you get to see the algorithm work, so instead of repeating what has been done many times before, I'll link to some resources here:
+- [The Metropolis-Hastings algorithm](https://blog.djnavarro.net/posts/2023-04-12_metropolis-hastings/) by Danielle Navarro. She uses an example probability distribution to show how the algorithm works, and it's very accessible. She implements the algorithm in R, but as a python-user myself, I still found the code very easy to understand. 
+- [The Metropolis Hastings Algorithm](https://stephens999.github.io/fiveMinuteStats/MH_intro.html) by Matthew Stephens. This contains a short and very simple toy example, also written in R. The algorithm implemented is actually the Metropolis algorithm, which is a special case where the proposal distribution is symmetric, i.e., $q(x \mid x^\ast) = q(x^\ast \mid x)$. Thus, the ratio $\tfrac{p(x^\ast )q(x \mid x^\ast)}{p(x)q(x^\ast \mid x)}$ reduces to $\tfrac{p(x^\ast)}{p(x)}$. 
+
+## Final remarks
+PyMC doesn't use the Metropolis-Hastings algorithm as its default sampler. Instead it uses the No-U-Turn Sampler (NUTS) {% cite hoffmanGelmanNUTS2011 %}, which is an extension of the Hamilton Monte Carlo algorithm. It's outside the scope of this post, but just wanted to quickly mention that NUTS is preferred, because 1) it has more efficient random walk strategy, and 2) it automatically tunes some parameters.
 ___
-[^BDA3]: Bayesian Data Analysis, p. 279.
+
+
+## References
+{% bibliography --cited %}
+
+## Footnotes
+[^1]: I don't really explain what *aperiodic* means, so I will give a brief description here: it basically means that the Markov chain doesn't get trapped in cycles. If it were possible to return to a state every, say, fourth step (i.e., at steps 4, 8, 16, ...), then that state would periodic (i.e., not aperiodic). This would be an issue, because then the Markov chain might "oscillate", so to speak, and never settle in a steady (stationary) state. More formally, a state $x_i$ is aperiodic if the greatest common divisor of all possible return times to that state is 1. And if all states of an irreducible chain are aperiodic, then the whole chain is aperiodic.
+
