@@ -417,7 +417,7 @@ $$
 	= \int \mathcal{N}(y^\ast  \mid X^\ast \beta, \sigma^2 I) \mathcal{N}(\beta \mid \mu_N, \sigma^2 \Lambda_N^{-1}) d\beta.
 $$
 
-We can compute this without directly integrating it by using well-known a theorem[^1]:
+We can compute this without directly integrating it by using well-known a theorem {% cite AllOfStatistics -l 40 %}:
 
 >**Theorem**
 >Let $z$ follow a multivariate normal distribution
@@ -674,5 +674,5 @@ $$
 Conjugacy gives us full analytical tractability: posteriors, predictive distribution, and model evidence — all in closed form.
 
 ---
-
-[^1]: Wessermann, L. (2004). *All of Statistics: A Concise Course in Statistical Inference*, p. 40
+## References
+{% bibliography --cited %}
