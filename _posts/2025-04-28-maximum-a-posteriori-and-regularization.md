@@ -3,8 +3,9 @@ layout: post
 title: Maximum a Posteriori and Regularization
 subtitle: I derive the maximum a posteriori (MAP) estimator and show how, under different prior choices, MAP estimation leads naturally to L2-regularization (Ridge regression) with a normal prior and L1-regularization (LASSO regression) with a Laplace prior.
 ---
+I [previously]({{site.baseurl}}/blog/bayesian-linear-regression) worked through (one way of) how to perform linear regression the [Bayesian]({{site.baseurl}}/blog/bayesian-inference) way. It involved *a lot* of tedious math, and it didn't look very similar to other known ways of performing linear regression. So that's the topic for today; how does bayesian inference relate to classical methods?
 
-In Bayesian inference, we consider parameters to be random variables and data to be fixed. This is in stark contrast to classical (Frequentist) statistics where data is considered random and the parameters fixed. When we perform [Bayesian inference]({{site.baseurl}}/blog/bayesian-inference), we estimate a probability distribution for each parameter, rather than a single number. However, sometimes we might be interested in just one number, so how should we define this number? A common choice is the value that maximizes the posterior. This estimator is called the *maximum a posteriori (MAP)*-estimator:
+Sometimes, sources will start off with highlighting the philosophical differences between Bayesian and classical (Frequentist) statistics: that Bayesians consider parameters to be random variables and data to be fixed, while Frequentists consider parameters fixed and data to be random {% cite AllOfStatistics -l 175-6 %}. I could probably easily spend a lot of time inside the rabbit hole of the [philosophy of probability](https://plato.stanford.edu/entries/probability-interpret/), but the main take-away is that Bayesians estimate a whole probability distribution of a parameter, while Frequentists estimate a single number for the parameter. So off-the-bat, it isn't very obvious how to relate the two. But getting a single number from a probability distribution is kind of trivial; we just need to decide how to obtain this number. A common choice is the value that maximizes the probability distribution. A common choice is the value that maximizes the posterior. This estimator is called the *maximum a posteriori (MAP)*-estimator:
 
 $$
 \begin{align}
@@ -176,3 +177,6 @@ where $\lambda_2=\frac{2\sigma^2}{b}$ and $\lVert \cdot \rVert_1$ denotes the L1
 
 ## Conclusion
 In summary, the maximum a posteriori (MAP) estimator is a natural Bayesian alternative to the Frequentist maximum likelihood estimator (MLE). When combined with different priors, such as normal or Laplace distributions, the MAP leads directly to well-known regularization techniques like Ridge and LASSO regression. This highlights that regularization can be interpreted as introducing prior information about the parameters into the model.
+
+# Resources
+{% bibliography --cited %}
