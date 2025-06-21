@@ -33,7 +33,8 @@ $$
 \begin{align}
 \hat{\theta}_{\text{MLE}} &:= \underset{\theta}{\arg \max} \left \{ p(y \mid \theta ) \right \}\\
     &= \underset{\theta}{\arg \max} \left \{ \log p(y \mid \theta) \right \}\label{7}.
-\end{align}$$
+\end{align}
+$$
 
 If we consider a standard linear regression formulation
 

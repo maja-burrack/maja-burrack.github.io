@@ -116,8 +116,8 @@ You can find many examples of how to implement the algorithm online, including s
 
 ## Final remarks
 PyMC doesn't use the Metropolis-Hastings algorithm as its default sampler. Instead it uses the No-U-Turn Sampler (NUTS) {% cite hoffmanGelmanNUTS2011 %}, which is an extension of the Hamilton Monte Carlo algorithm. It's outside the scope of this post, but just wanted to quickly mention that NUTS is preferred, because 1) it has more efficient random walk strategy, and 2) it automatically tunes some parameters.
-___
 
+___
 
 ## References
 {% bibliography --cited %}
