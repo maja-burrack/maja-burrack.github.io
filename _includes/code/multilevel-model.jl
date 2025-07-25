@@ -126,6 +126,8 @@ test_output = test_data[:, [:event_name, :gender, :athlete_name, :score_final, :
 
 show(test_output, allrows=true)
 
+mean(chain, :σ_ath)^2
+
 # Let's plot the probability distributions of the intercepts for the most common and least common athlete
 counts = combine(groupby(data, :athlete_idx), nrow => :count)
 most_common = counts[counts.count .== maximum(counts.count), :athlete_idx]

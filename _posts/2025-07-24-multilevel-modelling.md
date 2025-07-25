@@ -333,8 +333,20 @@ model = bayesian_multilevel_model(data)
 chain = sample(model, NUTS(), 4_000)
 ```
 
+and can view the summary statistics by calling `describe(chain)`. However, the summary statistics are very different from that of the R model, and that's because it's a Bayesian model. We don't obtain a single estimate for each parameter; rather, we obtain a whole probability distribution.
 
-For comparison reason, let's try and predict the final scores for the world cup in Brazil just like above. This is a bit involved, since the model does not output point estimates for the parameters, but rather full probability distributions. There isn't even (as far as I can tell) a suitable `predict` function implemented that would do the hard work for us. Therefore, I have had to write a curstom `predict_score_final` function for this specific model. If you are interested, you can find all the julia code [here](INSERT LINK). Here are the predictions:
+Sometimes this is exactly what we want, but it makes comparing this model to the R model non-trivial. We are gonna do it anyways by simply taking the means of the probability distributions as our parameter estimates. Using the same notation as above, the parameter estimates from this model are:
+
+$$
+\begin{gathered}
+    \alpha = 8.81, \quad \beta_1 = 0.41, \quad  \beta_2 = 0.11, \\
+    \sigma^2_{\mathrm{comp}} = 74.23, \quad \sigma^2_{\mathrm{athlete}} = 124.74, \quad \sigma^2 = 261.45
+\end{gathered}
+$$
+
+The variances are a bit different from the R estimates, but that could easily be due to my choice of priors. 
+
+Let's also try and predict the final scores of the boulder world cup in Brazil like above. This is a bit involved, as there isn't (as far as I can tell as the time of writing) a suitable `predict` function implemented that would do the hard work for us. Therefore, I have had to write a custom `predict_score_final` function for this specific model. If you are interested, you can find all the julia code [here](INSERT LINK). Here are the predictions:
 
 ```
  Row │ event_name                    gender   athlete_name     score_final  pred     residual 
