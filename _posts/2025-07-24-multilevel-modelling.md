@@ -262,7 +262,9 @@ test_data$pred <- predict(model, test_data, allow.new.levels = TRUE)
 test_data$residual <- round(test_data$score_final - test_data$pred, 1)
 
 print(test_data[, c("event_name", "gender", "athlete_name", "score_final", "pred", "residual")])
+```
 
+```
    event_name                   gender athlete_name   score_final  pred residual
    <chr>                        <chr>  <chr>                <dbl> <dbl>    <dbl>
  1 IFSC World Cup Curitiba 2025 male   ANRAKU Sorato         69.7  86.0    -16.3
@@ -289,4 +291,70 @@ We are not spot on, but at least the ordering for the men is correct! For the wo
 Let's also fit the model above using Bayesian methods. We will leave R behind and use julia instead for this.
 For simplicity, we will stick to the same model specification as above.
 
-Using `Turing.jl`, the syntax is:
+Using `Turing.jl` to define out Bayesian multilevel model, the syntax is very different from `lme4` but much closer to the mathematical model specification above:
+
+```julia
+@model function bayesian_multilevel_model(data)
+    N = length(data.score_final)
+    Ncomp = length(levels(data.comp_id))
+    Nath = length(levels(data.athlete_id))
+
+    # Hyperpriors
+    σ ~ truncated(Normal(0, 50), 0, Inf)
+    σ_comp ~ truncated(Normal(0, 50), 0, Inf)
+    σ_ath ~ truncated(Normal(0, 50), 0, Inf)
+    
+    # Fixed effects
+    α ~ Normal(0, 100)
+    β_semi ~ Normal(0, 10)
+    β_quali ~ Normal(0, 10)
+    
+    # Varying intercepts for competitions and athletes
+    comp_eff ~ filldist(Normal(0, σ_comp), Ncomp)
+    ath_eff ~ filldist(Normal(0, σ_ath), Nath)
+
+    # Likelihood
+    for i in 1:N
+        μ = α +
+            β_semi * data.score_semi[i] +
+            β_quali * data.score_quali[i] +
+            comp_eff[data.comp_idx[i]] + # I have created indexes for comp_id and athlete_id previously
+            ath_eff[data.athlete_idx[i]]
+        
+        data.score_final[i] ~ Normal(μ, σ)
+    end
+end
+```
+
+We fit the model like this:
+
+```julia
+model = bayesian_multilevel_model(data)
+chain = sample(model, NUTS(), 4_000)
+```
+
+
+For comparison reason, let's try and predict the final scores for the world cup in Brazil just like above. This is a bit involved, since the model does not output point estimates for the parameters, but rather full probability distributions. There isn't even (as far as I can tell) a suitable `predict` function implemented that would do the hard work for us. Therefore, I have had to write a curstom `predict_score_final` function for this specific model. If you are interested, you can find all the julia code [here](INSERT LINK). Here are the predictions:
+
+```
+ Row │ event_name                    gender   athlete_name     score_final  pred     residual 
+     │ String                        String7  String31         Float64?     Float64  Float64
+─────┼────────────────────────────────────────────────────────────────────────────────────────
+   1 │ IFSC World Cup Curitiba 2025  male     ANRAKU Sorato           69.7     84.4     -14.7
+   2 │ IFSC World Cup Curitiba 2025  male     SCHALCK Mejdi           58.9     56.4       2.5
+   3 │ IFSC World Cup Curitiba 2025  male     NARASAKI Tomoa          39.0     56.6     -17.6
+   4 │ IFSC World Cup Curitiba 2025  male     AMAGASA Sohta           29.5     59.7     -30.2
+   5 │ IFSC World Cup Curitiba 2025  male     FUJIWAKI Yuji           19.6     47.1     -27.5
+   6 │ IFSC World Cup Curitiba 2025  male     PEHARC Anze             19.3     45.1     -25.8
+   7 │ IFSC World Cup Curitiba 2025  male     JENFT Paul              19.2     49.4     -30.2
+   8 │ IFSC World Cup Curitiba 2025  male     POSCH Jan-Luca           9.3     51.0     -41.7
+   9 │ IFSC World Cup Curitiba 2025  female   MEIGNAN Naïlé           99.6     61.4      38.2
+  10 │ IFSC World Cup Curitiba 2025  female   BERTONE Oriane          99.5     71.0      28.5
+  11 │ IFSC World Cup Curitiba 2025  female   MORONI Camilla          83.8     60.4      23.4
+  12 │ IFSC World Cup Curitiba 2025  female   NAKAMURA Mao            69.7     63.8       5.9
+  13 │ IFSC World Cup Curitiba 2025  female   SEKIKAWA Melody         69.5     53.6      15.9
+  14 │ IFSC World Cup Curitiba 2025  female   ITO Futaba              69.4     53.0      16.4
+  15 │ IFSC World Cup Curitiba 2025  female   MATSUFUJI Anon          49.5     50.9      -1.4
+  16 │ IFSC World Cup Curitiba 2025  female   SANDERS Nekaia          34.8     47.7     -12.9
+```
+The predictions are very similar to the predictions we obtained from the R model, which is expected. I specified some pretty weak priors for the Bayesian model in the hopes that it would yield similar results.  

@@ -1,7 +1,8 @@
 using 
     CSV, 
     DataFrames, MixedModels, PrettyTables, Statistics,
-    CategoricalArrays
+    CategoricalArrays,
+    Turing, CSV, DataFrames, CategoricalArrays, StatsModels, LinearAlgebra
 
 # loading and transforming data
 file = "_data/ifsc_boulder_results_2025.csv"
@@ -11,68 +12,167 @@ select!(data, Not(1)) # first col is just an index
 data.comp_id = categorical(data.comp_id)
 data.athlete_id = categorical(data.athlete_id)
 data.athlete_country = categorical(data.athlete_country)
-unstacked_scores = unstack(data[:, ["comp_id", "athlete_id", "round", "score"]], :round, :score)
 
+unstacked_scores = unstack(data[:, ["comp_id", "athlete_id", "round", "score"]], :round, :score)
 select!(data, Not([:round, :score]))
 unique!(data)
 data = innerjoin(data, unstacked_scores, on = [:comp_id, :athlete_id])
 
 rename!(data, "Qualification" => "score_quali", "Semi-final" => "score_semi", "Final" => "score_final")
 
-# modelling with MixedModels.jl (frequentist methods)
-formula = @formula(
-    score_final ~ 1 + gender + athlete_country + first_season
-    + (1 + score_quali + score_semi | athlete_country/athlete_id) 
-    + (1 + score_quali + score_semi | comp_id)
-)
+data.comp_idx = levelcode.(data.comp_id)
+data.athlete_idx = levelcode.(data.athlete_id)
 
+# let's take out one event for testing out model later. This is a tiny test dataset, but that's ok. We are just having fun!
+test_comp = 1408
+test_data = data[data.event_id .== test_comp, :]
+data = data[data.event_id .!= test_comp, :]
 
-model = fit(LinearMixedModel, formula, data)
+@model function bayesian_multilevel_model(data)
+    N = length(data.score_final)
+    Ncomp = length(levels(data.comp_id))
+    Nath = length(levels(data.athlete_id))
 
-# Display the model summary
-println(model)
+    # Hyperpriors
+    σ ~ truncated(Normal(0, 50), 0, Inf)
+    σ_comp ~ truncated(Normal(0, 50), 0, Inf)
+    σ_ath ~ truncated(Normal(0, 50), 0, Inf)
+    
+    # Fixed effects
+    α ~ Normal(0, 100)
+    β_semi ~ Normal(0, 10)
+    β_quali ~ Normal(0, 10)
+    
+    # Varying intercepts for competitions and athletes
+    comp_eff ~ filldist(Normal(0, σ_comp), Ncomp)
+    ath_eff ~ filldist(Normal(0, σ_ath), Nath)
 
-# Calculate the Mean Squared Error (MSE)
-predicted = predict(model)
-actual = data.score_final
-residual = predicted .- actual
-mse = mean((predicted .- actual).^2)
-
-results = select(data, ["event_id", "comp_id", "athlete_name", "score_final"])
-results.predicted = predicted
-results.residual = residual
-
-for event_id in unique(results.event_id)
-    println(pretty_table(results[(results.event_id .== 1405) , :]))
+    # Likelihood
+    for i in 1:N
+        μ = α +
+            β_semi * data.score_semi[i] +
+            β_quali * data.score_quali[i] +
+            comp_eff[data.comp_idx[i]] +
+            ath_eff[data.athlete_idx[i]]
+        
+        data.score_final[i] ~ Normal(μ, σ)
+    end
 end
 
-println("Mean Squared Error (MSE): ", mse)
+# Instantiate and sample
+model = bayesian_multilevel_model(data)
+chain = sample(model, NUTS(), 4_000)
+
+describe(chain)
 
 
-newdata = DataFrame(
-    event_id = [9999],
-    event_name = ["NEW"],
-    dcat_id = [7],
-    dcat = ["BOULDER Women"],
-    athlete_name = ["NEW"],
-    birthday = nothing,
-    score_final = [0.0],                 # dummy value, will be ignored in prediction
-    gender = ["female"],
-    athlete_country = ["JPN"],
-    first_season = [2019],
-    score_quali = [110.0],
-    score_semi = [75.0],
-    athlete_id = [9999],                 # can be new
-    comp_id = [99999]            # new competition
-)
-# Ensure grouping variables are categorical with the same levels
-data.comp_id = categorical(data.comp_id, levels=levels(data.comp_id))
-data.athlete_id = categorical(data.athlete_id, levels=levels(data.athlete_id))
-data.athlete_country = categorical(data.athlete_country, levels=levels(data.athlete_country))
+function predict_score_final(chain, test_data, train_data)
 
-combined_data = vcat(data, newdata)
-# levels!(data.comp_id, vcat(levels(data.comp_id), 99999))
-levels!(data.athlete_id, vcat(levels(data.athlete_id), 9999))
+    α = mean(chain, :α)
+    β_semi = mean(chain, :β_semi)
+    β_quali = mean(chain, :β_quali)
 
-predict(model, newdata; new_re_levels=:missing)
-println("Predicted score_final: ", ŷ)
+    comp_eff_names = MCMCChains.namesingroup(chain, :comp_eff)
+    ath_eff_names = MCMCChains.namesingroup(chain, :ath_eff)
+
+    # comp_eff = [mean(chain, k) for k in comp_eff_names]
+    # ath_eff = [map_estimates[k] for k in ath_eff_names]
+    # println(keys(comp_eff))
+
+    comp_levels = levels(train_data.comp_id)
+    ath_levels = levels(train_data.athlete_id)
+
+    comp_codes = levelcode.(CategoricalArray(test_data.comp_id, levels=comp_levels))
+    ath_codes = levelcode.(CategoricalArray(test_data.athlete_id, levels=ath_levels))
+
+    semi_scores = test_data[!, :score_semi]
+    quali_scores = test_data[!, :score_quali]
+
+    n = nrow(test_data)
+    preds = Vector{Float64}(undef, n)
+
+    for i in 1:n
+        semi = semi_scores[i]
+        quali = quali_scores[i]
+        comp_id = comp_codes[i]
+        ath_id = ath_codes[i]
+
+        comp_eff = mean(chain, Symbol("comp_eff[$comp_id]"))
+        ath_eff = mean(chain, Symbol("ath_eff[$ath_id]"))
+
+        comp_term = comp_id ≤ length(comp_eff_names) ? comp_eff : 0.0
+        ath_term = ath_id ≤ length(ath_eff_names) ? ath_eff : 0.0
+
+        preds[i] = α + β_semi * semi + β_quali * quali + comp_term + ath_term
+    end
+
+    return preds
+end
+
+# map_estimate = maximum_a_posteriori(model)
+preds = predict_score_final(chain, data, data)
+
+data.preds = preds
+errors = data.score_final .- data.preds
+
+mae = mean(abs.(errors))
+rmse = sqrt(mean(errors .^ 2))
+
+test_data.pred = predict_score_final(chain, test_data, data)
+test_data.pred = round.(test_data.pred, digits=1)
+test_data.residual = round.(test_data.score_final .- test_data.pred,digits=1)
+
+test_output = test_data[:, [:event_name, :gender, :athlete_name, :score_final, :pred, :residual]]
+
+show(test_output, allrows=true)
+
+# Let's plot the probability distributions of the intercepts for the most common and least common athlete
+counts = combine(groupby(data, :athlete_idx), nrow => :count)
+most_common = counts[counts.count .== maximum(counts.count), :athlete_idx]
+least_common = counts[counts.count .== minimum(counts.count), :athlete_idx]
+
+most_common = 15 #most_common[end]
+least_common = least_common[end]
+
+# Extract samples
+sorato_samples = Array(chain[:"ath_eff[15]"])
+janja_samples = Array(chain[:"ath_eff[9]"])
+
+# Plot densities
+density(sorato_samples, label = "Sorato", linewidth = 2)
+vline!([mean(sorato_samples)], label = "Mean Sorato", linestyle = :dash, color = :blue)
+
+density!(janja_samples, label = "Janja", linewidth = 2)
+vline!([mean(janja_samples)], label = "Mean Janja", linestyle = :dash, color = :red)
+
+using StatsPlots, Statistics
+
+# Extract samples
+sorato_samples = Array(chain[:"ath_eff[34]"])
+janja_samples = Array(chain[:"ath_eff[9]"])
+
+# Get MAP values
+map_estimates = maximum_a_posteriori(model).values
+sorato_map = map_estimates[Symbol("ath_eff[34]")]
+janja_map = map_estimates[Symbol("ath_eff[9]")]
+
+# Plot densities
+density(sorato_samples, label = "Sorato", linewidth = 2)
+vline!([mean(sorato_samples)], label = "Mean Sorato", linestyle = :dash, color = :blue)
+vline!([sorato_map], label = "MAP Sorato", linestyle = :dot, color = :blue)
+
+density!(janja_samples, label = "Janja", linewidth = 2)
+
+comp_eff_names = MCMCChains.namesingroup(chain, :comp_eff)
+# Extract samples for each comp_eff
+comp_eff_samples = [Array(chain[Symbol(name)]) for name in comp_eff_names]
+
+# Create a density plot for the first comp_eff to start the plot
+p = density(comp_eff_samples[1], linewidth=2)
+
+# Add densities for the other comp_eff parameters
+for i in eachindex(comp_eff_samples)
+    density!(p, comp_eff_samples[i], linewidth=2)
+end
+
+display(p)
