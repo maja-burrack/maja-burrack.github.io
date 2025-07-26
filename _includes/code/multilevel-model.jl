@@ -2,7 +2,7 @@ using
     CSV, 
     DataFrames, MixedModels, PrettyTables, Statistics,
     CategoricalArrays,
-    Turing, CSV, DataFrames, CategoricalArrays, StatsModels, LinearAlgebra
+    Turing, CategoricalArrays, StatsModels, LinearAlgebra
 
 # loading and transforming data
 file = "_data/ifsc_boulder_results_2025.csv"
@@ -27,6 +27,11 @@ data.athlete_idx = levelcode.(data.athlete_id)
 test_comp = 1408
 test_data = data[data.event_id .== test_comp, :]
 data = data[data.event_id .!= test_comp, :]
+
+
+output_file = joinpath("_data", "processed_ifsc_boulder_results_2025.csv")
+output_data = select(data, Not([:dcat_id, :first_season, :comp_idx, :athlete_idx]))
+CSV.write(output_file, output_data)
 
 @model function bayesian_multilevel_model(data)
     N = length(data.score_final)

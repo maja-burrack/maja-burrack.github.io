@@ -1,70 +1,98 @@
 ---
 layout: post
-title: Multilevel modelling
-subtitle: 
+title: Multilevel (or Hierarchical, or Mixed) Modelling
+subtitle: The one in which the author writes a surprisingly long introduction to multilevel modelling (with math and all) and then proceeds to show how to fit one in both R and Julia with frequentist and Bayesian methods, respectively, despite not being very proficient in either language, because every company she has ever worked at has been python-houses. 
 ---
-## Bagground and motivation
-Multilevel models are extensions of regression specifically suitable for data that is structured in groups or with different granularities. I often come across data structured in this way with data available at different levels or granularities,  Consider an example [...]. 
+## Theory and motivation
+Multilevel models are extensions of regression specifically suitable for data that is structured in groups or with different granularities. I often come across data structured in this way with data available at different levels or granularities, In the retail industry, for example, you might have data at product-level, brand-level, store-level, retailer-level etc. That poses some challenges; some of which multilevel modelling solves.
+
+So how might we go about modelling something on an individual level, when some of the data is at a group-level?
 
 One strategy would be to fit one model completely ignoring the group indicators but potentially including group-level predictors:
+
 $$
+\begin{equation}
 y_i = \alpha + \beta X_i + \epsilon_i, \quad \epsilon_i \sim \mathcal{N}(0, \sigma^2),
+\end{equation}
 $$
+
 where $X$ is a $n \times k$ matrix of predictors ($n$ is the number of observations, $k$ is the number of predictors). $X_i$ is then the vector of length $k$ representing the $i$th row of $X$ and $\beta$ is a column vector of length $k$ (note: $\beta$ is generally a vector, while $\alpha$ is a scalar. We will keep this notation throughout).
 
 Such a model ignores the group-level variation beyond that explained by the group-level predictors (provided we include these in the predictors $X$). Sometimes this is fine, but if we expect the groups to be different in a way that *isn't* captured by the group-level predictors, then this model might suit our needs.
 
 An alternative strategy is to create separate models for each group:
+
 $$
+\begin{equation}
 y_{ij} = \alpha_{j} + \beta_{j} X_{ij} + \epsilon_{ij}, \quad \epsilon_{ij} \sim \mathcal{N}(0, \sigma_j^2),
+\end{equation}
 $$
-where the $j$'s index the groups $J$. Here, the predictors $X_{ij}$ would not include any group-level predictors, nor indicators, as these would be constant within each group, and so it wouldn't make sense to include them. This is like the opposite end of the spectrum. (FOOTNOTE The groups are basically treated completely separately. I've built models like this before for work. Once, I estimated the price elasticities for *each* product in an assortment like this. I had a lot of data available, so the results were pretty good. But it might have made sense to treat some of the products as part of a larger group (such as a product category) and model in away that allows the sharing of information across products. That's basically what multilevel modelling is.)
+
+where the $j$'s index the groups $J$. Here, the predictors $X_{ij}$ would not include any group-level predictors, nor indicators, as these would be constant within each group, and so it wouldn't make sense to include them. This is like the opposite end of the spectrum[^1].
 
 Perhaps we can settle some place in the middle between these two extremes by allowing the intercepts or slopes (or both) to vary between the groups.
 
 Varying-intercepts and varying-slopes are not unique to multilevel models (which we haven't even discussed yet). It's possible to specify such a model without making it "multilevel":
 
 If we add group indicators to the model, this would essentially result in a model with varying intercepts for each group:
-$$
-y_i = \sum_{j} \gamma_j I_{j} + \beta X_i + \epsilon_{i}, \quad \epsilon_i \sim \mathcal{N}(0, \sigma^2).
-$$
-Here, each $\gamma_j$ is the group $j$'s intercept. We have dropped the global intercept $\alpha$, because if we were to include it, it would cause perfect multicollinearity. If we wanted to include it, we should drop one of the indicators. (#TODO: insert reference). In a similar vein, the predictors $X_i$ in this case cannot include any group-level predictors as these would be collinear with the group indicators.
 
-Similarly for varying-slopes:
+$$
+\begin{equation}
+y_i = \sum_{j} \gamma_j I_{j} + \beta X_i + \epsilon_{i}, \quad \epsilon_i \sim \mathcal{N}(0, \sigma^2).
+\end{equation}
+$$
+
+Here, each $\gamma_j$ is the group $j$'s intercept. We have dropped the global intercept $\alpha$, because if we were to include it, it would cause perfect [multicollinearity](https://en.wikipedia.org/wiki/Multicollinearity). If we wanted to include it, we should drop one of the indicators. In a similar vein, the predictors $X_i$ in this case cannot include any group-level predictors as these would be collinear with the group indicators.
 
 If we also add interactions between the indicators and predictors, we get varying slopes for each group:
+
 $$
-y_i = \sum_{j} \gamma_j I_{j} + \sum_j \beta_j X_i I_j + \epsilon_i, \quad \epsilon_i \sim \mathcal{N}(0, \sigma^2),
+\begin{equation}
+y_i = \sum_{j} \gamma_j I_{j} + \sum_j \beta_j X_i I_j + \epsilon_i, \quad \epsilon_i \sim \mathcal{N}(0, \sigma^2) \label{with-indicators},
+\end{equation}
 $$
+
 effectively a separate slope for each group. For the same reason as above, we have dropped the global slope $\beta$. This is an example of a varying-intercepts, varying-slopes model. We can write a general *varying-intercepts, varying-slopes model* as:
+
 $$
+\begin{equation}
 y_i = \alpha_{j[i]} + \beta_{j[i]}X_i + \epsilon_i, \quad \epsilon_i \sim \mathcal{N}(0, \sigma^2),
+\end{equation}
 $$
+
 where $j[i]$ is the group $j$ that contains the unit $i$. 
 
-A limitation of (INSERT FORMULA NUMBER) is that we cannot include group-level predictors, as they are collinear with group indicators, as mentioned earlier. It turns out we can circumvent this problem, and include both group indicators and group predictors, if we build a **multilevel model**.
+A limitation of \eqref{with-indicators} is that we cannot include group-level predictors, as they are collinear with group indicators, as mentioned earlier. It turns out we can circumvent this problem, and include both group indicators and group predictors, if we build a **multilevel model**.
 
 ## The multiple levels in multilevel models
 If we have a model with varying coefficients, *and* a model for those varying coefficients, it's a multilevel model. The model for the varying coefficients could include group-level predictors, which differentiates it from classical regression. For example, we could model the varying intercepts and slopes as linear regressions on the group-level predictors $U_j$:
 
 $$
-\begin{align}
+\begin{equation}
+\begin{aligned}
 y_i &= \alpha_{j[i]} + \beta_{j[i]}X_i + \epsilon_i, \quad \epsilon_i \sim \mathcal{N}(0, \sigma^2)\\
 \alpha_j &= a_0 + b_0U_j + \eta_{\alpha_j}, \quad \eta_{\alpha_j} \sim \mathcal{N}(0, \sigma_{\alpha}^2)\\
 \beta^{(l)}_j &= a^{(l)} + b^{(l)}U_j + \eta_{\beta^{(l)}_j}, \quad \eta_{\beta^{(l)}_j} \sim \mathcal{N}(0, \sigma_{\beta^{(l)}}^2), \quad l=1,...,k
-\end{align}
+\end{aligned} \label{slope-regr}
+\end{equation} 
 $$
+
 Alternatively, we can treat the varying coefficients as random variables drawn from common distributions without group-level predictors:
-$$
-\alpha_j \sim \mathcal{N}(\mu_{\alpha}, \sigma_{\alpha}^2), \quad \beta^{(l)}_{j} \sim \mathcal{N}(\mu_{\beta^{(l)}}, \sigma_{\beta^{(l)}}^2), \quad l = 1,...,k
-$$
-In both cases, we capture variation between groups through the variance components, which is "the feature that distinguishes multilevel models from classical regression" (INSERT REFERENCE). So even though the latter does not include group-level predictors, it's still considered a multilevel model, because we have specified a (probability) model for each of the coefficients. Generally, **a multilevel model is a regression in which the parameters are given a model--with parameters of its own that are also estimated from data.**
-
-In (INSERT REF), we indicated independent (uncorrelated) normal distributions for each slope's (and the intercept's) error terms. If we also wanted to estimate the correlation between intercepts and slopes, we could specify a model like this:
 
 $$
-\begin{align}
-y_i &\sim \mathcal{N}(\alpha_{j[i]} + \beta_{j[i]}X_i, \sigma^2), \quad
+\begin{equation}
+\alpha_j \sim \mathcal{N}(\mu_{\alpha}, \sigma_{\alpha}^2), \quad \beta^{(l)}_{j} \sim \mathcal{N}(\mu_{\beta^{(l)}}, \sigma_{\beta^{(l)}}^2), \quad l = 1,...,k \label{random-coef-distr}
+\end{equation}
+$$
+
+In both cases, we capture variation between groups through the variance components, which is "the feature that distinguishes multilevel models from classical regression" {% cite gelmanMultilevel -l 1 %}. So even though the latter does not include group-level predictors, it's still considered a multilevel model, because we have specified a (probability) model for each of the coefficients. Generally, **a multilevel model is a regression in which the parameters are given a model--with parameters of its own that are also estimated from data.**
+
+In \eqref{slope-regr}, we indicated independent (uncorrelated) normal distributions for each slope's (and the intercept's) error terms. If we also wanted to estimate the correlation between intercepts and slopes, we could specify a model like this:
+
+$$
+\begin{equation}
+\begin{gathered}
+y_i \sim \mathcal{N}(\alpha_{j[i]} + \beta_{j[i]}X_i, \sigma^2) \\
 \begin{pmatrix}
 \alpha_j \\
 \beta_j
@@ -76,21 +104,27 @@ y_i &\sim \mathcal{N}(\alpha_{j[i]} + \beta_{j[i]}X_i, \sigma^2), \quad
 \end{pmatrix},
 \Sigma
 \right),
-\end{align}
+\end{gathered}
+\end{equation}
 $$
 
-where $\Sigma$ is the covariance matrix. Here, we model all coefficients jointly as a multivariate normal distribution allowing for correlation between them. In the simple case when $X_i$ only contains one predictor (and hence $\beta_j$ reduces to a scalar), the covariance matrix is simply
+where $\Sigma$ is the [covariance matrix](https://en.wikipedia.org/wiki/Covariance_matrix). Here, we model all coefficients jointly as a multivariate normal distribution allowing for correlation between them. In the simple case when $X_i$ only contains one predictor (and hence $\beta_j$ reduces to a scalar), the covariance matrix is simply
+
 $$
 \Sigma = \begin{pmatrix}
 \sigma_\alpha^2 & \rho \sigma_\alpha \sigma_\beta \\
 \rho \sigma_\alpha \sigma_\beta & \sigma_\beta^2
 \end{pmatrix},
 $$
-where $\rho$ is the correlation between the slopes and the intercepts (also called a correlation parameter). If we fix $\rho = 0$, it reduces to (INSERT REF). The covariance matrix can be naturally extended to higher dimensions.
+
+where $\rho$ is the correlation between the slopes and the intercepts (also called a correlation parameter). If we fix $\rho = 0$, it reduces to \eqref{random-coef-distr}. The covariance matrix can be naturally extended to higher dimensions.
 
 Similarly, if we want to also include group-level predictors $U_j$ as in (???), we can expand the model above like this:
+
 $$
-y_i \sim \mathcal{N}(\alpha_{j[i]} + \beta_{j[i]}X_i, \sigma^2), \quad
+\begin{equation}
+\begin{gathered}
+y_i \sim \mathcal{N}(\alpha_{j[i]} + \beta_{j[i]}X_i, \sigma^2), \\
 \begin{pmatrix}
 \alpha_j \\
 \beta_j
@@ -102,6 +136,8 @@ a_1 + b_1 U_j
 \end{pmatrix},
 \Sigma
 \right).
+\end{gathered}
+\end{equation}
 $$
 
 Allowing correlation between coefficients makes for a much more flexible model, but modelling the correlations when the number of varying coefficients per group is greater than 2 can be a challenge. However, with modern statistical software is shouldn't be too much of a hassle (more on this later).
@@ -110,39 +146,77 @@ Allowing correlation between coefficients makes for a much more flexible model, 
 Assigning a probability distribution to the parameters $\alpha_j$ and $\beta_j$ has the effect of pulling their estimates towards the overall means $\mu_\alpha$ and $\mu_\beta$ (this is true whether the mean is itself modelled as a regression or not). In that sense, we can say that the parameter estimates are *shrunk* or *partially pooled* towards their overall mean; hence, we call this effect *shrinkage* or *partial pooling*. In contrast, *complete pooling* occurs when we restrict the $\alpha_j$'s and $\beta_j$'s to be fixed across groups (such as (??)), and *no pooling* occurs if we fit intercepts separately for each group (such as (??))
 
 The amount of shrinkage/pooling depends on the variances and the number of observations in each group. If there are few observations in a group, it won't carry much information and estimates will be shrunk closer to the overall mean, meaning more pooling. Similarly if the variance is small; we get more pooling as we wouldn't expect the true values of the parameters to differ much across group.
-# Fitting multilevel models (with code examples)
+
+## Fitting multilevel models (with code examples)
 There are many methods and software tools available for fitting multilevel models. I can't tell you if any are better than others, but here are some examples of programming languages and packages you can use:
-- R (lme4)
-- python (statsmodels, pymc)
-- julia (MixedModels.jl, Turing.jl)
-Some of these use frequentist methods (lme4, statsmodels, MixedModels.jl), while other use Bayesian methods (pymc, Turing.jl).
+- R (`lme4`)
+- python (`statsmodels`, `pymc`)
+- Julia (`MixedModels.jl`, `Turing.jl`)
+Some of these use frequentist methods (`lme4`, `statsmodels`, `MixedModels.jl`), while other use [Bayesian methods]({{site.baseurl}}/blog/bayesian-inference) (`pymc`, `Turing.jl`).
 
 
-Here I will give an example of how to do it in julie (footnote: I don't even know julia, but I recently attended a julia meetup and everyone's excitement about the language rubbed off on me. I had to try it), but the syntax is not too different among the various programming languages, so it shouldn't be too hard to translate it from one language to another.
+Below, I will fit the same model using frequentist methods in R, and using Bayesian methods in Julia[^2], but the syntax is not too different among the various programming languages, so it shouldn't be too hard to translate it from one language to another.
 
-We will start will a simple dataset that I scraped from the IFSC results website (you can find the scraper [here](https://maja-burrack.github.io/ifsc-results-scraper)). The dataset contains results from world cups in the boulder (a specific kind of climbing) discipline for 2025. I have only kept the results of the athletes who made it to the final. This is a preview of the data:
-(INSERT PREVIEW)
-For our small example, we want to try and predict the scores of the final. If I were a gambler, maybe the model could tell me who to put my money on! 
+We will start will a simple dataset that I scraped from the IFSC results website (you can find the scraper [here](https://maja-burrack.github.io/ifsc-results-scraper)). The dataset contains results from world cups in the boulder (a specific kind of climbing) discipline for 2025. I have only kept the results of the athletes who made it to the final. This is the data we will work with:
+
+<table class="datatable">
+  <thead>
+    <tr>
+      <th>event_id</th>
+      <th>event_name</th>
+      <th>dcat</th>
+      <th>athlete_id</th>
+      <th>athlete_name</th>
+      <th>athlete_country</th>
+      <th>comp_id</th>
+      <th>gender</th>
+      <th>score_quali</th>
+      <th>score_semi</th>
+      <th>score_final</th>
+
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in site.data.processed_ifsc_boulder_results_2025 %}
+    <tr>
+      <td>{{ row.event_id }}</td>
+      <td>{{ row.event_name }}</td>
+      <td>{{ row.dcat }}</td>
+      <td>{{ row.athlete_id }}</td>
+      <td>{{ row.athlete_name }}</td>
+      <td>{{ row.athlete_country }}</td>
+      <td>{{ row.comp_id }}</td>
+      <td>{{ row.gender }}</td>
+      <td>{{ row.score_quali }}</td>
+      <td>{{ row.score_semi }}</td>
+      <td>{{ row.score_final }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+For our small example, we want to try and predict the scores of the final. If I were a gambler, maybe the model could tell me whom to put my money on! 
 
 Let's specify a model like this:
 
 $$
+\mathrm{score\_final}_i = \alpha + \beta_1 \mathrm{score\_quali}_i + \beta_2 \mathrm{score\_semi}_i + u_{j[i]} + v_{k[i]} + \epsilon_i,
+$$
 
-\mathrm{score\_final}_i = \alpha + \beta_1 \mathrm{score\_quali}_i + \beta_2 \mathrm{score\_semi}_i + u_{j[i]} + v_{k[i]} + \epsilon_i
-$$,
 with
 
 $$
 u_{j} \sim \mathcal{N}(0, \sigma^2_{\mathrm{comp}}), \quad v_{k} \sim \mathcal{N}(0, \sigma^2_{\mathrm{athlete}}), \quad \epsilon_i \sim \mathcal{N}(0, \sigma^2).
 $$
 
-This model has no varying slopes (it does have slopes, namely $\beta_1$ and $\beta_2$, but none of these vary by groups), but it does have varying intercepts for two groups: the athletes, and the competitions. We could also have specifed varying slopes, but since we don't have very many observations (only 88!), we will keep it simple. If we introduce too many parameters, we won't be able to fit the model reliably. 
+This model has no varying slopes (it does have slopes, namely $\beta_1$ and $\beta_2$, but none of these vary by groups), but it does have varying intercepts for two groups: the athletes, and the competitions. We could also have specified varying slopes, but since we don't have very many observations (only 88!), we will keep it simple. If we introduce too many parameters, we won't be able to fit the model reliably. 
 
+### Multilevel modelling in R
 Using R's `lme4`, the syntax for specifying the model is this:
 ```
 score_final ~ 1 + score_quali + score_semi + (1 | comp_id) + (1 | athlete_id)
 ```
-If, for example, we also wanted the slope of `score_semi` to vary for each athlete, we would modify the last term to `(1 + score_semi | comp_id)`. 
+If, for example, we also wanted the slope $\beta_2$ of `score_semi` to vary for each athlete, we would change the last term to `(1 + score_semi | comp_id)`. 
 
 Fitting the model yields:
 ```R
@@ -190,16 +264,19 @@ We can read off of the summary that
 $$
 \alpha = 8.28, \quad \beta_1 = 0.17, \quad \beta_2 = 0.36.
 $$
+
 These are also referred to as fixed effects, although I find the terminology inconsistent across different resources. We can also read off the variances for the varying intercepts:
+
 $$
 \sigma^2_{\mathrm{comp}} = 116.1, \quad \sigma^2_{\mathrm{athlete}} = 116.1, \quad \sigma^2 = 190.0.
 $$
 
-We can also list the varying intercepts (the $u_{j[i]}$'s and $v_{k[i]}$'s) like this:
+We can get the varying coefficients (the $u_{j[i]}$'s and $v_{k[i]}$'s) by calling `ranef(model)`. The result is this:
 
 ```R
 ranef(model)
-
+```
+```
 $athlete_name
                   (Intercept)
 AKHTAR Dayan      -11.0442441
@@ -253,7 +330,7 @@ IFSC World Cup Salt Lake City 2025:male     -1.284810
 
 with conditional variances for "athlete_name" "event_name:gender"
 ```
-We see very high intercepts for Janja Garnbret and Sorato Anraku, which is exactly what I excepted, because I watch climbing competitiions fanatically and these two in particular bring home medals all the time (Janja is not human. This is a known fact).
+We see very high intercepts for Janja Garnbret and Sorato Anraku, which is exactly what I excepted, because I watch climbing competitions fanatically and these two, in particular, bring home medals all the time (Janja is not human. This is a known fact).
 
 Just for fun, I kept the world cup in Curitiba out of the sample, so we could review the predictions on unseen data with a new level:
 
@@ -285,13 +362,13 @@ print(test_data[, c("event_name", "gender", "athlete_name", "score_final", "pred
 16 IFSC World Cup Curitiba 2025 female SANDERS Nekaia        34.8  48.5    -13.7
 ```
 
-We are not spot on, but at least the ordering for the men is correct! For the women, it's not too bad either - I, for one, was a bit surprised when Camilla Moroni took bronze.
+We are not spot on, but at least the ordering for the men is correct! For the women, it's not too bad either - I think we all expected Oriane to take gold, but Naïlé did seriously well, too. 
 
-### Bayesian whatever
-Let's also fit the model above using Bayesian methods. We will leave R behind and use julia instead for this.
+### Bayesian Multilevel Modelling in Julia
+Let's also fit the model above using Bayesian methods. We will leave R behind and use Julia instead for this.
 For simplicity, we will stick to the same model specification as above.
 
-Using `Turing.jl` to define out Bayesian multilevel model, the syntax is very different from `lme4` but much closer to the mathematical model specification above:
+Using `Turing.jl` to define out Bayesian multilevel model, the syntax is very different from `lme4` but much closer to the mathematical formulas above (we can even use greek letters in Julia):
 
 ```julia
 @model function bayesian_multilevel_model(data)
@@ -326,7 +403,7 @@ Using `Turing.jl` to define out Bayesian multilevel model, the syntax is very di
 end
 ```
 
-We fit the model like this:
+We fit the model like this (using the NUTS sampler, which I mention at the end of my post on the [Metropolis-Hastings Algorithm]({{site.baseurl}}/blog/metropolis-hastings-algorithm)):
 
 ```julia
 model = bayesian_multilevel_model(data)
@@ -346,7 +423,7 @@ $$
 
 The variances are a bit different from the R estimates, but that could easily be due to my choice of priors. 
 
-Let's also try and predict the final scores of the boulder world cup in Brazil like above. This is a bit involved, as there isn't (as far as I can tell as the time of writing) a suitable `predict` function implemented that would do the hard work for us. Therefore, I have had to write a custom `predict_score_final` function for this specific model. If you are interested, you can find all the julia code [here](INSERT LINK). Here are the predictions:
+Let's also try and predict the final scores of the boulder world cup in Brazil like above. This is a bit involved, as there isn't (as far as I can tell as the time of writing) a suitable `predict` function implemented that would do the hard work for us. Therefore, I have had to write a custom `predict_score_final` function for this specific model. If you are interested, you can find all the Julia code [here](https://github.com/maja-burrack/maja-burrack.github.io/blob/cf149c358412838676b0aefa301892b97304476f/_includes/code/multilevel-model.jl). Here are the predictions:
 
 ```
  Row │ event_name                    gender   athlete_name     score_final  pred     residual 
@@ -369,4 +446,20 @@ Let's also try and predict the final scores of the boulder world cup in Brazil l
   15 │ IFSC World Cup Curitiba 2025  female   MATSUFUJI Anon          49.5     50.9      -1.4
   16 │ IFSC World Cup Curitiba 2025  female   SANDERS Nekaia          34.8     47.7     -12.9
 ```
-The predictions are very similar to the predictions we obtained from the R model, which is expected. I specified some pretty weak priors for the Bayesian model in the hopes that it would yield similar results.  
+The predictions are very similar to the predictions we obtained from the R model, which is expected. I specified some pretty weak priors for the Bayesian model in the hopes that it would yield similar results.
+
+A lot more could be said about this Bayesian model, but that's beyond the scope of this post.
+
+## Endnote
+I only read up on multilevel models because I had to deal with one at work, but I am pleased to realise how closely it's tied with Bayesian statistics, which I have been spending quite some time reading up on recently.
+
+Most of what I know about multilevel models, I learned from {% cite gelmanMultilevel %}. I have only read parts of it, but I highly recommend it.
+
+---
+
+## References
+{% bibliography --cited %}
+
+## Footnotes
+[^1]: The groups are basically treated completely separately. I've built models like this before for work. Once, I estimated the price elasticities for *each* product in an assortment like this. I had a lot of data available, so the results were pretty good. But it might have made sense to treat some of the products as part of a larger group (such as a product category) and model in away that allows the sharing of information across products. That's basically what multilevel modelling is.
+[^2]: I don't even know Julia, but I recently attended a Julia meetup and everyone's excitement about the language rubbed off on me. I had to try it. (Actually, I don't know R very well, either. Everywhere I have worked have been python houses, but it's nice exploring other options).

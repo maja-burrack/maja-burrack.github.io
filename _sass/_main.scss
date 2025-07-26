@@ -206,3 +206,60 @@ blockquote {
   padding: 10px 0;  /* Adds some padding to the sides */
 }
 
+/* Match Bootstrap-like tables */
+table.dataTable {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  background: #fff; /* Table background */
+  border: 1px solid #dee2e6; /* Light Bootstrap-like border */
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+table.dataTable th {
+  background-color: #f8f9fa; /* Light gray header */
+  color: #495057;
+  font-weight: 600;
+  padding: 0.75rem;
+  border-bottom: 2px solid #dee2e6;
+}
+
+table.dataTable td {
+  padding: 0.75rem;
+  color: #212529;
+  border-top: 1px solid #dee2e6;
+}
+
+/* Zebra striping */
+table.dataTable.stripe tbody tr:nth-of-type(odd) {
+  background-color: #f9f9f9;
+}
+
+/* Hover effect */
+table.dataTable.hover tbody tr:hover {
+  background-color: #f1f3f5;
+}
+
+/* Pagination styling */
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+  border-radius: 0.25rem;
+  border: 1px solid #dee2e6;
+  padding: 0.25rem 0.5rem;
+  margin: 0 2px;
+  background: #fff;
+  color: #0d6efd; /* Bootstrap primary color */
+  cursor: pointer;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+  background: #0d6efd;
+  color: #fff !important;
+  border: 1px solid #0d6efd;
+}
+
+.dataTables_wrapper {
+  overflow-x: auto;
+  margin-bottom: 2rem;
+  margin-top: 2rem;
+}

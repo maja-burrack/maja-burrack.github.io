@@ -23,5 +23,19 @@
     <!-- JavaScript for figure numbering (if necessary) -->
     <script src="{{ '/assets/js/figure-numbers.js' | relative_url }}"></script>
 
+    <!-- DataTables JS (place at bottom before </body>) -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        // Initialize all tables with class "datatable"
+        $('.datatable').DataTable({
+            pageLength: 5,
+            scrollX: true,
+            lengthMenu: [ [5, 10, 25], [5, 10, 25] ] 
+        });
+      });
+    </script>
+
   </body>
 </html>
