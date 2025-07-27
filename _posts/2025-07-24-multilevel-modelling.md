@@ -3,6 +3,11 @@ layout: post
 title: Multilevel (or Hierarchical, or Mixed) Modelling
 subtitle: The one in which the author writes a surprisingly long introduction to multilevel modelling (with math and all) and then proceeds to show how to fit one in both R and Julia with frequentist and Bayesian methods, respectively, despite not being very proficient in either language, because every company she has ever worked at has been python-houses. 
 ---
+#### Contents
+{:.no_toc}
+* TOC
+{:toc}
+
 ## Theory and motivation
 Multilevel models are extensions of regression specifically suitable for data that is structured in groups or with different granularities. I often come across data structured in this way with data available at different levels or granularities, In the retail industry, for example, you might have data at product-level, brand-level, store-level, retailer-level etc. That poses some challenges; some of which multilevel modelling solves.
 
@@ -213,7 +218,7 @@ This model has no varying slopes (it does have slopes, namely $\beta_1$ and $\be
 
 ### Multilevel modelling in R
 Using R's `lme4`, the syntax for specifying the model is this:
-```
+```R
 score_final ~ 1 + score_quali + score_semi + (1 | comp_id) + (1 | athlete_id)
 ```
 If, for example, we also wanted the slope $\beta_2$ of `score_semi` to vary for each athlete, we would change the last term to `(1 + score_semi | comp_id)`. 
@@ -228,8 +233,8 @@ model <- lmer(
 summary(model)
 ```
 
-```
-Linear mixed model fit by REML ['lmerMod']
+<div class="scrollable-code">
+<pre class="highlight"><code class="language-plaintext">Linear mixed model fit by REML ['lmerMod']
 Formula: score_final ~ 1 + score_semi + score_quali + (1 | comp_id) +
     (1 | athlete_id)
    Data: data
@@ -257,7 +262,8 @@ Correlation of Fixed Effects:
             (Intr) scr_sm
 score_semi  -0.441       
 score_quali -0.733 -0.222
-```
+</code></pre>
+</div>
 
 We can read off of the summary that
 
@@ -276,8 +282,8 @@ We can get the varying coefficients (the $u_{j[i]}$'s and $v_{k[i]}$'s) by calli
 ```R
 ranef(model)
 ```
-```
-$athlete_name
+<div class="scrollable-code">
+<pre class="highlight"><code class="language-plaintext">$athlete_name
                   (Intercept)
 AKHTAR Dayan      -11.0442441
 AMAGASA Sohta       3.5316370
@@ -329,7 +335,9 @@ IFSC World Cup Salt Lake City 2025:female   -1.454375
 IFSC World Cup Salt Lake City 2025:male     -1.284810
 
 with conditional variances for "athlete_name" "event_name:gender"
-```
+</code></pre>
+</div>
+
 We see very high intercepts for Janja Garnbret and Sorato Anraku, which is exactly what I excepted, because I watch climbing competitions fanatically and these two, in particular, bring home medals all the time (Janja is not human. This is a known fact).
 
 Just for fun, I kept the world cup in Curitiba out of the sample, so we could review the predictions on unseen data with a new level:
@@ -371,6 +379,8 @@ For simplicity, we will stick to the same model specification as above.
 Using `Turing.jl` to define out Bayesian multilevel model, the syntax is very different from `lme4` but much closer to the mathematical formulas above (we can even use greek letters in Julia):
 
 ```julia
+using Turing
+
 @model function bayesian_multilevel_model(data)
     N = length(data.score_final)
     Ncomp = length(levels(data.comp_id))
@@ -425,8 +435,8 @@ The variances are a bit different from the R estimates, but that could easily be
 
 Let's also try and predict the final scores of the boulder world cup in Brazil like above. This is a bit involved, as there isn't (as far as I can tell as the time of writing) a suitable `predict` function implemented that would do the hard work for us. Therefore, I have had to write a custom `predict_score_final` function for this specific model. If you are interested, you can find all the Julia code [here](https://github.com/maja-burrack/maja-burrack.github.io/blob/cf149c358412838676b0aefa301892b97304476f/_includes/code/multilevel-model.jl). Here are the predictions:
 
-```
- Row │ event_name                    gender   athlete_name     score_final  pred     residual 
+<div class="scrollable-code">
+<pre class="highlight"><code class="language-plaintext"> Row │ event_name                    gender   athlete_name     score_final  pred     residual 
      │ String                        String7  String31         Float64?     Float64  Float64
 ─────┼────────────────────────────────────────────────────────────────────────────────────────
    1 │ IFSC World Cup Curitiba 2025  male     ANRAKU Sorato           69.7     84.4     -14.7
@@ -445,7 +455,9 @@ Let's also try and predict the final scores of the boulder world cup in Brazil l
   14 │ IFSC World Cup Curitiba 2025  female   ITO Futaba              69.4     53.0      16.4
   15 │ IFSC World Cup Curitiba 2025  female   MATSUFUJI Anon          49.5     50.9      -1.4
   16 │ IFSC World Cup Curitiba 2025  female   SANDERS Nekaia          34.8     47.7     -12.9
-```
+</code></pre>
+</div>
+
 The predictions are very similar to the predictions we obtained from the R model, which is expected. I specified some pretty weak priors for the Bayesian model in the hopes that it would yield similar results.
 
 A lot more could be said about this Bayesian model, but that's beyond the scope of this post.
@@ -458,8 +470,10 @@ Most of what I know about multilevel models, I learned from {% cite gelmanMultil
 ---
 
 ## References
+{:.no_toc}
 {% bibliography --cited %}
 
 ## Footnotes
+{:.no_toc}
 [^1]: The groups are basically treated completely separately. I've built models like this before for work. Once, I estimated the price elasticities for *each* product in an assortment like this. I had a lot of data available, so the results were pretty good. But it might have made sense to treat some of the products as part of a larger group (such as a product category) and model in away that allows the sharing of information across products. That's basically what multilevel modelling is.
 [^2]: I don't even know Julia, but I recently attended a Julia meetup and everyone's excitement about the language rubbed off on me. I had to try it. (Actually, I don't know R very well, either. Everywhere I have worked have been python houses, but it's nice exploring other options).

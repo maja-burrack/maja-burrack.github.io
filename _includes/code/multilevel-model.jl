@@ -1,8 +1,13 @@
 using 
     CSV, 
-    DataFrames, MixedModels, PrettyTables, Statistics,
-    CategoricalArrays,
-    Turing, CategoricalArrays, StatsModels, LinearAlgebra
+    DataFrames, 
+    MixedModels, 
+    PrettyTables, 
+    Statistics,
+    Turing, 
+    CategoricalArrays, 
+    StatsModels, 
+    LinearAlgebra
 
 # loading and transforming data
 file = "_data/ifsc_boulder_results_2025.csv"
@@ -29,9 +34,10 @@ test_data = data[data.event_id .== test_comp, :]
 data = data[data.event_id .!= test_comp, :]
 
 
-output_file = joinpath("_data", "processed_ifsc_boulder_results_2025.csv")
-output_data = select(data, Not([:dcat_id, :first_season, :comp_idx, :athlete_idx]))
-CSV.write(output_file, output_data)
+# save processed data to csv
+# output_file = joinpath("_data", "processed_ifsc_boulder_results_2025.csv")
+# output_data = select(data, Not([:dcat_id, :first_season, :comp_idx, :athlete_idx]))
+# CSV.write(output_file, output_data)
 
 @model function bayesian_multilevel_model(data)
     N = length(data.score_final)
@@ -69,7 +75,6 @@ model = bayesian_multilevel_model(data)
 chain = sample(model, NUTS(), 4_000)
 
 describe(chain)
-
 
 function predict_score_final(chain, test_data, train_data)
 
@@ -133,16 +138,9 @@ show(test_output, allrows=true)
 
 mean(chain, :σ_ath)^2
 
-# Let's plot the probability distributions of the intercepts for the most common and least common athlete
-counts = combine(groupby(data, :athlete_idx), nrow => :count)
-most_common = counts[counts.count .== maximum(counts.count), :athlete_idx]
-least_common = counts[counts.count .== minimum(counts.count), :athlete_idx]
-
-most_common = 15 #most_common[end]
-least_common = least_common[end]
-
-# Extract samples
-sorato_samples = Array(chain[:"ath_eff[15]"])
+# let's plot the distributions for the intercepts of Sorato and Janja. 
+# Janja did not participate at many comps this season, so we would expect wider tails
+sorato_samples = Array(chain[:"ath_eff[34]"])
 janja_samples = Array(chain[:"ath_eff[9]"])
 
 # Plot densities
@@ -151,35 +149,3 @@ vline!([mean(sorato_samples)], label = "Mean Sorato", linestyle = :dash, color =
 
 density!(janja_samples, label = "Janja", linewidth = 2)
 vline!([mean(janja_samples)], label = "Mean Janja", linestyle = :dash, color = :red)
-
-using StatsPlots, Statistics
-
-# Extract samples
-sorato_samples = Array(chain[:"ath_eff[34]"])
-janja_samples = Array(chain[:"ath_eff[9]"])
-
-# Get MAP values
-map_estimates = maximum_a_posteriori(model).values
-sorato_map = map_estimates[Symbol("ath_eff[34]")]
-janja_map = map_estimates[Symbol("ath_eff[9]")]
-
-# Plot densities
-density(sorato_samples, label = "Sorato", linewidth = 2)
-vline!([mean(sorato_samples)], label = "Mean Sorato", linestyle = :dash, color = :blue)
-vline!([sorato_map], label = "MAP Sorato", linestyle = :dot, color = :blue)
-
-density!(janja_samples, label = "Janja", linewidth = 2)
-
-comp_eff_names = MCMCChains.namesingroup(chain, :comp_eff)
-# Extract samples for each comp_eff
-comp_eff_samples = [Array(chain[Symbol(name)]) for name in comp_eff_names]
-
-# Create a density plot for the first comp_eff to start the plot
-p = density(comp_eff_samples[1], linewidth=2)
-
-# Add densities for the other comp_eff parameters
-for i in eachindex(comp_eff_samples)
-    density!(p, comp_eff_samples[i], linewidth=2)
-end
-
-display(p)
