@@ -89,7 +89,19 @@ body {
   font-weight: bold;
   margin-left: none;
   padding-top: 1%;
-  color: #575757;
+  color: var(--bs-gray-dark);
+}
+
+@media (prefers-color-scheme: dark) {
+  .archive-date {
+    // float: right;
+    text-transform: uppercase;
+    font-size: small;
+    font-weight: bold;
+    margin-left: none;
+    padding-top: 1%;
+    color: var(--bs-gray);
+  }
 }
 
 .archive-item {
@@ -97,10 +109,20 @@ body {
 }
 
 .archive-title {
-  color: #000000;
+  color: var(--lt-color);
   // text-decoration: none;
   font-weight:bold;
   font-size: larger;
+}
+
+@media (prefers-color-scheme: dark) {
+  .archive-title {
+    color: var(--dt-color);
+  }
+
+  .archive-title:hover {
+    color: var(--bs-light-purple);
+  }
 }
 
 .front-matter {
@@ -142,11 +164,6 @@ body {
   color: #212529;
 }
 
-
-.highlight {
-  background-color: #272822;
-}
-
 pre.highlight {
   padding: 1rem;
 }
@@ -160,29 +177,33 @@ pre.highlight {
   margin-right: 0.25rem !important;
 }
 
-// @media (prefers-color-scheme: dark) {
-//   .footer-icon-links {
-//     text-decoration: none;
-//     color: #e1e1e1;
-//   }
+@media (prefers-color-scheme: dark) {
+  .footer-icon-links {
+    text-decoration: none;
+    color: var(--dt-color);
+  }
 
-//   .footer-icon-links:hover,
-//   .footer-icon-links:focus {
-//     text-decoration: none;
-//     color: #e1e1e1;
-//   }
+  .footer-icon-links:hover,
+  .footer-icon-links:focus {
+    text-decoration: none;
+    color: var(--bs-light-purple);
+  }
 
-//   .archive-title {
-//     color: #e1e1e1;
-//   }
+  .archive-title {
+    color: var(--dt-color);
+  }
 
-//   .light-avatar {
-//     display: none !important;
-//   }
-//   .dark-avatar {
-//     display: inline-block !important;
-//   }
-// }
+  .archive-title:hover {
+    color: var(--bs-light-purple);
+  }
+
+  .light-avatar {
+    display: none !important;
+  }
+  .dark-avatar {
+    display: inline-block !important;
+  }
+}
 
 blockquote {
   border: 1px solid black;
@@ -263,3 +284,87 @@ table.dataTable.hover tbody tr:hover {
   margin-bottom: 2rem;
   margin-top: 2rem;
 }
+@media (prefers-color-scheme: dark) {
+  table.dataTable {
+    background: #222; /* Dark background */
+    border: 1px solid #444; /* Darker border */
+    border-radius: 0.5rem;
+    overflow: hidden;
+  }
+
+  table.dataTable th {
+    background-color: #333; /* Dark header */
+    color: #e1e1e1; /* Light text */
+    font-weight: 600;
+    padding: 0.75rem;
+    border-bottom: 2px solid #444;
+  }
+
+  table.dataTable td {
+    padding: 0.75rem;
+    color: #ddd; /* Light text */
+    border-top: 1px solid #444;
+  }
+
+  /* Zebra striping */
+  table.dataTable.stripe tbody tr:nth-of-type(odd) {
+    background-color: #2a2a2a;
+  }
+
+  /* Hover effect */
+  table.dataTable.hover tbody tr:hover {
+    background-color: #3d3d3d;
+  }
+
+  /* Pagination styling */
+  .dataTables_wrapper .dataTables_paginate .paginate_button {
+    border-radius: 0.25rem;
+    border: 1px solid #444;
+    padding: 0.25rem 0.5rem;
+    margin: 0 2px;
+    background: #222;
+    color: #66aaff; /* A lighter blue for primary */
+    cursor: pointer;
+  }
+
+  .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    background: #66aaff;
+    color: #222 !important;
+    border: 1px solid #66aaff;
+  }
+
+  .dataTables_wrapper {
+    overflow-x: auto;
+    margin-bottom: 2rem;
+    margin-top: 2rem;
+  }
+
+  /* Filter input and length select */
+  .dataTables_wrapper .dataTables_filter input,
+  .dataTables_wrapper .dataTables_length select {
+    background-color: #333;
+    color: #ddd;
+    border: 1px solid #444;
+  }
+}
+
+.scrollable-code {
+  overflow-x: auto;       /* Horizontal scrolling */
+  overflow-y: hidden;       /* Vertical scrolling */
+  max-width: 100%;
+  max-height: 400px;      /* or your preferred height */
+  margin-bottom: 1rem;
+}
+
+.scrollable-code pre {
+  white-space: pre;       /* No wrap */
+  overflow-x: auto;       /* Allow horizontal scroll if needed */
+  overflow-y: auto;    /* Let vertical overflow be handled by parent */
+  display: block;
+  max-height: 400px;       /* No height limit here */
+}
+
+.scrollable-code code {
+  white-space: pre;       /* No wrap */
+}
+

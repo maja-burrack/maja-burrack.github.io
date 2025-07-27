@@ -1,7 +1,20 @@
-$dt-gray-dark: #282a36;  // Background
-$dt-gray: #44475a;       // Current Line & Selection
+$lt-background: #f8f8f2; // Light background
+$lt-foreground: #282a36; // Default text (dark gray)
+$lt-selection: #e9e9f4; // Light selection background
+
+$lt-comment: #999999; // Softer gray for comments
+$lt-cyan: #008b94; // Adjusted for light bg
+$lt-green: #008f5d; // Slightly darker green
+$lt-orange: #d37800; // Muted orange
+$lt-pink: #d33682; // Softer magenta/pink
+$lt-purple: #6c4cff; // Adjusted for better contrast
+$lt-red: #d70022; // Rich red
+$lt-yellow: #8b8000; // Muted yellow for readability
+
+$dt-gray-dark: #282a36; // Background
+$dt-gray: #44475a; // Current Line & Selection
 $dt-gray-light: #f8f8f2; // Foreground
-$dt-blue: #6272a4;       // Comment
+$dt-blue: #6272a4; // Comment
 $dt-cyan: #8be9fd;
 $dt-green: #50fa7b;
 $dt-orange: #ffb86c;
@@ -10,14 +23,156 @@ $dt-purple: #bd93f9;
 $dt-red: #ff5555;
 $dt-yellow: #f1fa8c;
 
-.highlight pre {
-    background-color: $dt-gray-dark
-}
 
 .highlight {
-    background: $dt-gray-dark;
-    color: $dt-gray-light;
-  
+  background: $lt-background;
+  color: $lt-foreground;
+
+  .hll,
+  .s,
+  .sa,
+  .sb,
+  .sc,
+  .dl,
+  .sd,
+  .s2,
+  .se,
+  .sh,
+  .si,
+  .sx,
+  .sr,
+  .s1,
+  .ss {
+    color: $lt-yellow;
+  }
+
+  .go {
+    color: $lt-selection;
+  }
+
+  .err,
+  .g,
+  .l,
+  .n,
+  .x,
+  .p,
+  .ge,
+  .gr,
+  .gh,
+  .gi,
+  .gp,
+  .gs,
+  .gu,
+  .gt,
+  .ld,
+  .no,
+  .nd,
+  .ni,
+  .ne,
+  .nn,
+  .nx,
+  .py,
+  .w,
+  .bp {
+    color: $lt-foreground;
+  }
+
+  .gh,
+  .gi,
+  .gu {
+    font-weight: bold;
+  }
+
+  .ge {
+    text-decoration: underline;
+  }
+
+  .bp {
+    font-style: italic;
+  }
+
+  .c,
+  .ch,
+  .cm,
+  .cpf,
+  .c1,
+  .cs {
+    color: $lt-comment;
+  }
+
+  .kd,
+  .kt,
+  .nb,
+  .nl,
+  .nv,
+  .vc,
+  .vg,
+  .vi,
+  .vm {
+    color: $lt-cyan;
+    font-style: italic;
+  }
+
+  .na,
+  .nc,
+  .nf,
+  .fm {
+    color: $lt-green;
+  }
+
+  .k,
+  .o,
+  .cp,
+  .kc,
+  .kn,
+  .kp,
+  .kr,
+  .nt,
+  .ow {
+    color: $lt-purple;
+  }
+
+  .m,
+  .mb,
+  .mf,
+  .mh,
+  .mi,
+  .mo,
+  .il {
+    color: $lt-pink;
+  }
+
+  .gd {
+    color: $lt-red;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .highlight {
+    background: #2a2a2a;
+    color: #e1e1e1;
+
+    // Make names & generic identifiers a bit more colorful:
+    .n,
+    .nx,
+    .nn {
+      color: $dt-cyan; // function & module names
+    }
+
+    .na {
+      color: $dt-green; // attributes & variables
+    }
+
+    .no,
+    .bp {
+      color: $dt-orange; // constants, builtins
+    }
+
+    .nt,
+    .cp {
+      color: $dt-purple; // tags, keywords
+    }
+
     .hll,
     .s,
     .sa,
@@ -35,15 +190,14 @@ $dt-yellow: #f1fa8c;
     .ss {
       color: $dt-yellow;
     }
-  
+
     .go {
       color: $dt-gray;
     }
-  
+
     .err,
     .g,
     .l,
-    .n,
     .x,
     .p,
     .ge,
@@ -55,32 +209,28 @@ $dt-yellow: #f1fa8c;
     .gu,
     .gt,
     .ld,
-    .no,
     .nd,
     .ni,
     .ne,
-    .nn,
-    .nx,
     .py,
-    .w,
-    .bp {
+    .w {
       color: $dt-gray-light;
     }
-  
+
     .gh,
     .gi,
     .gu {
       font-weight: bold;
     }
-  
+
     .ge {
       text-decoration: underline;
     }
-  
+
     .bp {
       font-style: italic;
     }
-  
+
     .c,
     .ch,
     .cm,
@@ -89,7 +239,7 @@ $dt-yellow: #f1fa8c;
     .cs {
       color: $dt-blue;
     }
-  
+
     .kd,
     .kt,
     .nb,
@@ -100,26 +250,16 @@ $dt-yellow: #f1fa8c;
     .vi,
     .vm {
       color: $dt-cyan;
-    }
-  
-    .kd,
-    .nb,
-    .nl,
-    .nv,
-    .vc,
-    .vg,
-    .vi,
-    .vm {
       font-style: italic;
     }
-  
+
     .na,
     .nc,
     .nf,
     .fm {
       color: $dt-green;
     }
-  
+
     .k,
     .o,
     .cp,
@@ -127,11 +267,10 @@ $dt-yellow: #f1fa8c;
     .kn,
     .kp,
     .kr,
-    .nt,
     .ow {
       color: $dt-purple;
     }
-  
+
     .m,
     .mb,
     .mf,
@@ -141,9 +280,10 @@ $dt-yellow: #f1fa8c;
     .il {
       color: $dt-pink;
     }
-  
+
     .gd {
       color: $dt-red;
     }
   }
+}
 
