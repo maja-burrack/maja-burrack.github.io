@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Multilevel (or Hierarchical, or Mixed) Modelling
-subtitle: The one in which the author writes a surprisingly long introduction to multilevel modelling (with math and all) and then proceeds to show how to fit one in both R and Julia with frequentist and Bayesian methods, respectively, despite not being very proficient in either language, because every company she has ever worked at has been python-houses. 
+subtitle: The one in which the author writes a surprisingly long introduction to multilevel modelling (with math and all) and then proceeds to show how to fit one in both R and Julia with frequentist and Bayesian methods, respectively, despite not being very proficient in either language (because every company she has ever worked at has been python-houses). 
 ---
 #### Contents
 {:.no_toc}
