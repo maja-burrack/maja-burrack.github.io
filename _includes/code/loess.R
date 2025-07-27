@@ -2,11 +2,11 @@
 set.seed(123)
 x <- seq(0, 1, length.out = 100)
 y_true <- sin(5*x)
-y <- y_true + rnorm(length(x), mean=0, sd=0.3)
+y <- y_true + rnorm(length(x), mean = 0, sd = 0.3)
 
 # Fit LOESS model
-span = 0.4
-fit <- loess(y ~ x, span = span, degree=2)
+span <- 0.4
+fit <- loess(y ~ x, span = span, degree = 2)
 
 # Predict LOESS curve
 x_grid <- x
@@ -29,10 +29,11 @@ lines(x_grid, y_fit, col = "darkgreen", lwd = 2)
 lines(x_grid, y_true, col="black", lwd=1, lty=2)
 
 legend(
-  "topright", 
+  "topright",
   legend = c("All points", "Target point", "Neighborhood", "LOESS curve", "True curve"),
   col = c("blue", "red", "red", "darkgreen", "black"), 
   pch = c(1,19, 1, NA, NA), 
   lty = c(NA, NA, NA, 1, 2), 
   lwd = c(NA, NA, NA, 1, 2)
 )
+
