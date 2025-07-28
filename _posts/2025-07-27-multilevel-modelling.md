@@ -163,7 +163,7 @@ Some of these use frequentist methods (`lme4`, `statsmodels`, `MixedModels.jl`),
 
 Below, I will fit the same model using frequentist methods in R, and using Bayesian methods in Julia[^2], but the syntax is not too different among the various programming languages, so it shouldn't be too hard to translate it from one language to another.
 
-We will start will a simple dataset that I scraped from the IFSC results website (you can find the scraper [here](https://maja-burrack.github.io/ifsc-results-scraper)). The dataset contains results from world cups in the boulder discipline (a specific kind of climbing) for 2025. I have only kept the results of the athletes who made it to the final. This is the data we will work with:
+We will start will a simple dataset that I scraped from the IFSC results website (you can find the scraper [here](https://github.com/maja-burrack/ifsc-results-scraper)). The dataset contains results from world cups in the boulder discipline (a specific kind of climbing) for 2025. I have only kept the results of the athletes who made it to the final. This is the data we will work with:
 
 <table class="datatable">
   <thead>
