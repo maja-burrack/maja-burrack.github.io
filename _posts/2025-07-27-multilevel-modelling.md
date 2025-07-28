@@ -17,23 +17,23 @@ One strategy would be to fit one model completely ignoring the group indicators 
 
 $$
 \begin{equation}
-y_i = \alpha + \beta X_i + \epsilon_i, \quad \epsilon_i \sim \mathcal{N}(0, \sigma^2),
+y_i = \alpha + \beta X_i + \epsilon_i, \quad \epsilon_i \sim \mathcal{N}(0, \sigma^2), \label{one-model}
 \end{equation}
 $$
 
 where $X$ is a $n \times k$ matrix of predictors ($n$ is the number of observations, $k$ is the number of predictors). $X_i$ is then the vector of length $k$ representing the $i$th row of $X$ and $\beta$ is a column vector of length $k$ (note: $\beta$ is generally a vector, while $\alpha$ is a scalar. We will keep this notation throughout).
 
-Such a model ignores the group-level variation beyond that explained by the group-level predictors (provided we include these in the predictors $X$). Sometimes this is fine, but if we expect the groups to be different in a way that *isn't* captured by the group-level predictors, then this model might suit our needs.
+Such a model ignores the group-level variation beyond that explained by the group-level predictors (provided we include these in the predictors $X$). Sometimes this is fine, but if we expect the groups to be different in a way that *isn't* captured by the group-level predictors, then this model might not suit our needs.
 
 An alternative strategy is to create separate models for each group:
 
 $$
 \begin{equation}
-y_{ij} = \alpha_{j} + \beta_{j} X_{ij} + \epsilon_{ij}, \quad \epsilon_{ij} \sim \mathcal{N}(0, \sigma_j^2),
+y_{ij} = \alpha_{j} + \beta_{j} X_{ij} + \epsilon_{ij}, \quad \epsilon_{ij} \sim \mathcal{N}(0, \sigma_j^2), \label{separate-models}
 \end{equation}
 $$
 
-where the $j$'s index the groups $J$. Here, the predictors $X_{ij}$ would not include any group-level predictors, nor indicators, as these would be constant within each group, and so it wouldn't make sense to include them. This is like the opposite end of the spectrum[^1].
+where the $j$'s index the groups $J$. Here, the predictors $X_{ij}$ would not include any group-level predictors, nor indicators, as these would be constant within each group, and so it wouldn't make sense to include them. If \eqref{one-model} is one end of the spectrum, then \eqref{separate-models} is the opposite end[^1].
 
 Perhaps we can settle some place in the middle between these two extremes by allowing the intercepts or slopes (or both) to vary between the groups.
 
@@ -124,7 +124,7 @@ $$
 
 where $\rho$ is the correlation between the slopes and the intercepts (also called a correlation parameter). If we fix $\rho = 0$, it reduces to \eqref{random-coef-distr}. The covariance matrix can be naturally extended to higher dimensions.
 
-Similarly, if we want to also include group-level predictors $U_j$ as in (???), we can expand the model above like this:
+Similarly, if we want to also include group-level predictors $U_j$ as in \eqref{slope-regr}, we can expand the model above like this:
 
 $$
 \begin{equation}
@@ -148,7 +148,7 @@ $$
 Allowing correlation between coefficients makes for a much more flexible model, but modelling the correlations when the number of varying coefficients per group is greater than 2 can be a challenge. However, with modern statistical software is shouldn't be too much of a hassle (more on this later).
 
 ## Intermission: Shrinkage and pooling
-Assigning a probability distribution to the parameters $\alpha_j$ and $\beta_j$ has the effect of pulling their estimates towards the overall means $\mu_\alpha$ and $\mu_\beta$ (this is true whether the mean is itself modelled as a regression or not). In that sense, we can say that the parameter estimates are *shrunk* or *partially pooled* towards their overall mean; hence, we call this effect *shrinkage* or *partial pooling*. In contrast, *complete pooling* occurs when we restrict the $\alpha_j$'s and $\beta_j$'s to be fixed across groups (such as (??)), and *no pooling* occurs if we fit intercepts separately for each group (such as (??))
+Assigning a probability distribution to the parameters $\alpha_j$ and $\beta_j$ has the effect of pulling their estimates towards the overall means $\mu_\alpha$ and $\mu_\beta$ (this is true whether the mean is itself modelled as a regression or not). In that sense, we can say that the parameter estimates are *shrunk* or *partially pooled* towards their overall mean; hence, we call this effect *shrinkage* or *partial pooling*. In contrast, *complete pooling* occurs when we restrict the $\alpha_j$'s and $\beta_j$'s to be fixed across groups (such as in \eqref{one-model}), and *no pooling* occurs if we fit intercepts separately for each group (such as in \eqref{separate-models}).
 
 The amount of shrinkage/pooling depends on the variances and the number of observations in each group. If there are few observations in a group, it won't carry much information and estimates will be shrunk closer to the overall mean, meaning more pooling. Similarly if the variance is small; we get more pooling as we wouldn't expect the true values of the parameters to differ much across group.
 
@@ -157,12 +157,13 @@ There are many methods and software tools available for fitting multilevel model
 - R (`lme4`)
 - python (`statsmodels`, `pymc`)
 - Julia (`MixedModels.jl`, `Turing.jl`)
+
 Some of these use frequentist methods (`lme4`, `statsmodels`, `MixedModels.jl`), while other use [Bayesian methods]({{site.baseurl}}/blog/bayesian-inference) (`pymc`, `Turing.jl`).
 
 
 Below, I will fit the same model using frequentist methods in R, and using Bayesian methods in Julia[^2], but the syntax is not too different among the various programming languages, so it shouldn't be too hard to translate it from one language to another.
 
-We will start will a simple dataset that I scraped from the IFSC results website (you can find the scraper [here](https://maja-burrack.github.io/ifsc-results-scraper)). The dataset contains results from world cups in the boulder (a specific kind of climbing) discipline for 2025. I have only kept the results of the athletes who made it to the final. This is the data we will work with:
+We will start will a simple dataset that I scraped from the IFSC results website (you can find the scraper [here](https://maja-burrack.github.io/ifsc-results-scraper)). The dataset contains results from world cups in the boulder discipline (a specific kind of climbing) for 2025. I have only kept the results of the athletes who made it to the final. This is the data we will work with:
 
 <table class="datatable">
   <thead>
@@ -214,7 +215,7 @@ $$
 u_{j} \sim \mathcal{N}(0, \sigma^2_{\mathrm{comp}}), \quad v_{k} \sim \mathcal{N}(0, \sigma^2_{\mathrm{athlete}}), \quad \epsilon_i \sim \mathcal{N}(0, \sigma^2).
 $$
 
-This model has no varying slopes (it does have slopes, namely $\beta_1$ and $\beta_2$, but none of these vary by groups), but it does have varying intercepts for two groups: the athletes, and the competitions. We could also have specified varying slopes, but since we don't have very many observations (only 88!), we will keep it simple. If we introduce too many parameters, we won't be able to fit the model reliably. 
+This model has no varying slopes (it does have slopes, namely $\beta_1$ and $\beta_2$, but none of these vary by groups), but it does have varying intercepts for two groups: the athletes, and the competitions. We could also have specified varying slopes, but since we don't have very many observations (less than 100!), we will keep it simple. If we introduce too many parameters, we won't be able to fit the model reliably. 
 
 ### Multilevel modelling in R
 Using R's `lme4`, the syntax for specifying the model is this:
@@ -268,16 +269,16 @@ score_quali -0.733 -0.222
 We can read off of the summary that
 
 $$
-\alpha = 8.28, \quad \beta_1 = 0.17, \quad \beta_2 = 0.36.
+\alpha = 8.29, \quad \beta_1 = 0.36, \quad \beta_2 = 0.17.
 $$
 
 These are also referred to as fixed effects, although I find the terminology inconsistent across different resources. We can also read off the variances for the varying intercepts:
 
 $$
-\sigma^2_{\mathrm{comp}} = 116.1, \quad \sigma^2_{\mathrm{athlete}} = 116.1, \quad \sigma^2 = 190.0.
+\sigma^2_{\mathrm{comp}} = 116.1, \quad \sigma^2_{\mathrm{athlete}} = 187.1, \quad \sigma^2 = 190.0.
 $$
 
-We can get the varying coefficients (the $u_{j[i]}$'s and $v_{k[i]}$'s) by calling `ranef(model)`. The result is this:
+We can get the varying coefficients (the $u_{j}$'s and $v_{k}$'s) by calling `ranef(model)`. The result is this:
 
 ```R
 ranef(model)
@@ -340,7 +341,7 @@ with conditional variances for "athlete_name" "event_name:gender"
 
 We see very high intercepts for Janja Garnbret and Sorato Anraku, which is exactly what I excepted, because I watch climbing competitions fanatically and these two, in particular, bring home medals all the time (Janja is not human. This is a known fact).
 
-Just for fun, I kept the world cup in Curitiba out of the sample, so we could review the predictions on unseen data with a new level:
+Just for fun, I kept the world cup in Curitiba in Brazil out of the sample, so we could review the predictions on unseen data with a new level:
 
 ```R
 test_data$pred <- predict(model, test_data, allow.new.levels = TRUE)
@@ -370,7 +371,7 @@ print(test_data[, c("event_name", "gender", "athlete_name", "score_final", "pred
 16 IFSC World Cup Curitiba 2025 female SANDERS Nekaia        34.8  48.5    -13.7
 ```
 
-We are not spot on, but at least the ordering for the men is correct! For the women, it's not too bad either - I think we all expected Oriane to take gold, but Naïlé did seriously well, too. 
+We are not spot on, but at least the ordering for the men is correct! For the women, it's not too bad either --I think we all expected Oriane to take gold, but Naïlé did seriously well at this competition. 
 
 ### Bayesian Multilevel Modelling in Julia
 Let's also fit the model above using Bayesian methods. We will leave R behind and use Julia instead for this.
@@ -420,7 +421,7 @@ model = bayesian_multilevel_model(data)
 chain = sample(model, NUTS(), 4_000)
 ```
 
-and can view the summary statistics by calling `describe(chain)`. However, the summary statistics are very different from that of the R model, and that's because it's a Bayesian model. We don't obtain a single estimate for each parameter; rather, we obtain a whole probability distribution.
+We can view the summary statistics by calling `describe(chain)`. However, the summary statistics are very different from that of the R model, and that's because it's a Bayesian model. We don't obtain a single estimate for each parameter; rather, we obtain a whole probability distribution.
 
 Sometimes this is exactly what we want, but it makes comparing this model to the R model non-trivial. We are gonna do it anyways by simply taking the means of the probability distributions as our parameter estimates. Using the same notation as above, the parameter estimates from this model are:
 
@@ -431,9 +432,9 @@ $$
 \end{gathered}
 $$
 
-The variances are a bit different from the R estimates, but that could easily be due to my choice of priors. 
+The variances are a bit different from the R estimates, but that could easily be due to my choice of priors, so hardly surprising.
 
-Let's also try and predict the final scores of the boulder world cup in Brazil like above. This is a bit involved, as there isn't (as far as I can tell as the time of writing) a suitable `predict` function implemented that would do the hard work for us. Therefore, I have had to write a custom `predict_score_final` function for this specific model. If you are interested, you can find all the Julia code [here](https://github.com/maja-burrack/maja-burrack.github.io/blob/cf149c358412838676b0aefa301892b97304476f/_includes/code/multilevel-model.jl). Here are the predictions:
+Let's also try and predict the final scores of the boulder world cup in Brazil like above. This is a bit involved, as there isn't (as far as I can tell at the time of writing) a suitable `predict` function implemented that would do the hard work for us. Therefore, I have had to write a custom `predict_score_final` function for this specific model. If you are interested, you can find all the Julia code [here](https://github.com/maja-burrack/maja-burrack.github.io/blob/main/_includes/code/multilevel-model.jl). Here are the predictions:
 
 <div class="scrollable-code">
 <pre class="highlight"><code class="language-plaintext"> Row │ event_name                    gender   athlete_name     score_final  pred     residual 
