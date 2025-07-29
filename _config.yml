@@ -4,6 +4,7 @@
 
 # Name of your site (displayed in the navbar)
 name: Maja Burrack Larsen
+short_name: Maja Burrack
 
 # Your site's title (e.g., Ben's Awesome Site, The GitHub Blog, etc.), used as part of the title tag like Home | Ben's Awesome Site.
 title: Maja's Awesome Site
@@ -47,7 +48,7 @@ footer-links:
   github: maja-burrack
   instagram: 
   linkedin: maja-b-larsen
-  rss: # just type anything here for a working RSS icon
+  rss: feed # just type anything here for a working RSS icon
   twitter: 
 
 scholar:
