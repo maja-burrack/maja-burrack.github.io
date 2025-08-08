@@ -26,10 +26,11 @@ body {
 }
 
 .custom-container {
+  // box-sizing: border-box;
   flex: 1;
   // overflow: auto;
   max-width: 720px;
-  width: 100%; /* Adjust max-width as needed */
+  // width: 100%; /* Adjust max-width as needed */
   margin: 0 auto; /* Center the container */
   padding-top: 1.5rem
 }
