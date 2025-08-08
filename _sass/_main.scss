@@ -1,12 +1,12 @@
 html, body {
-  height: 100%;
-  margin: 0;
+  // height: 100%;
+  // margin: 0;
 }
 
 body {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* Makes sure the body takes up at least the full height of the viewport */
+  // min-height: 100vh; /* Makes sure the body takes up at least the full height of the viewport */
 }
 
 .minimalist-table {
@@ -25,20 +25,30 @@ body {
   border: unset;
 }
 
+// .custom-container {
+//   // box-sizing: border-box;
+//   flex: 1;
+//   // overflow: auto;
+//   max-width: 720px;
+//   // width: 100%; /* Adjust max-width as needed */
+//   // margin: 0 auto; /* Center the container */
+//   padding-top: 1.5rem
+// }
+
 .custom-container {
-  // box-sizing: border-box;
-  flex: 1;
-  // overflow: auto;
+  box-sizing: border-box;
   max-width: 720px;
-  // width: 100%; /* Adjust max-width as needed */
-  margin: 0 auto; /* Center the container */
-  padding-top: 1.5rem
+  width: 100%;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .post-container {
   max-width: 720px;
   width: 100%; /* Adjust max-width as needed */
-  margin: 0 auto; /* Center the container */
+  // margin: 0 auto; /* Center the container */
   text-align: left;
 }
 
