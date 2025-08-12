@@ -8,7 +8,7 @@ TODO: nice intro.. very hard
 
 We are interested in estimating the Conditional Average Treatment Effect (CATE). This is a measure of how much the outcome changes if we change something (give "treatment") conditional on some other factors. For simplicity, we will assume the treatment is binary, but it doesn't have to be. If we were to sell a product at difference prices, that would be a continuous treatment. 
 
-The formal definition of the CATE estimate is:
+The formal definition of the CATE is:
 
 $$
 \tau(x) = E [ Y(1) - Y(0) \mid X = x],
@@ -16,14 +16,14 @@ $$
 
 where $Y(1)$ is the outcome with the treatment, and $Y(0)$ is the outcome without the treatment.
 
-Unfortunately, we can't usually observe the CATE directly, because that would require us to assign both treatment and no-treatment to the same individual. That's why we need methods for estimating it even when we can't observe it. 
+Unfortunately, we can't usually observe the CATE directly, because that would require us to assign both treatment and no-treatment to the same unit. Since we can't observe it, we need methods for estimating it. 
 
 TODO: insert shit here
 
 ## The simplest method
-The S-learner is the simplest learner. The "S" stands for "single" because we use a single model to estimate the outcome $Y$ from a set of input variables including the treatment variable $T$. By including the treatment variable as a feature, we can use the model to estimate both what the outcome is (or would have been) with the treatment, and is (or would have been) wihout the treatment. Then the CATE is just the difference between the two. 
+The S-learner is the simplest method. The "S" stands for "single" because we use a single model to estimate the outcome $Y$ from a set of input variables including the treatment variable $T$. By including the treatment variable as a feature, we can use the model to estimate both what the outcome is (or would have been) with the treatment, and what it is (or would have been) wihout the treatment. Then the CATE is just the difference between the two. 
 
-In mathematical terms, we train one model that predicts the outcome $Y$ based on a set of features $X$ and a treatment variable $T$:
+In mathematical terms, we train one model (a base learner) that predicts the outcome $Y$ based on a set of features $X$ and a treatment variable $T$:
 
 $$
 \mu(x, t) = E [ Y | T=t, X=x ].
@@ -36,11 +36,9 @@ $$
 \hat{\tau}_S(x) = \hat{\mu}(x, 1) - \hat{\mu}(x, 0).
 $$
 
-That's all there is to the S-learner. Just fit one model on the outcome and use it to estimate what the outcome would have been under either treatment assignment.
+That's all there is to the S-learner. Just fit one model on the outcome and use it to estimate what the outcome would have been under each treatment assignment.
 
-The S-learner is simple, but perhaps too simple in some cases. If the treatment if relatively weak compared to other features in the model, its effect could get discarded entirely. 
-
-TODO: insert shit here. 
+The S-learner is simple, but perhaps too simple in some cases. If the treatment if relatively weak compared to other features in the model, the base learner might treat it as noise, leading to overly conservatice CATE estimates.
 
 ## The two-model method
 The T-learner introduces more complexity than the S-learner by using two models to estimate the CATE (hence, the "T" in T-learner. "T" for "two") instead of only one. 
@@ -54,16 +52,20 @@ $$
 \end{aligned}
 $$
 
-Here, we don't include the treatment as a feature (it's constant for each model, so it wouldn't add any information). The model fitted model $\hat{\mu}_0$ estimates the outcome without treatment (control), and the model $\hat{\mu}_1$ estimates the outcome with treatment, so we can define the CATE as:
+Here, we don't include the treatment as a feature (it's constant for each model, so it wouldn't add any information). The fitted model $\hat{\mu}_0$ estimates the outcome without treatment (control), and the model $\hat{\mu}_1$ estimates the outcome with treatment, so we can define the CATE as:
 
 $$
 \hat{\tau}_T(x) = \hat{\mu}_1(x) - \hat{\mu}_0(x).
 $$
 
+Compared to the S-learner, the T-learner's strength is that it fits models on the two groups separately, which should make it easier to learn the structure of each. It is less likely that the treatment effect will be shrunk to 0.
+
+However, the T-learner might not perform well if the data is imbalanced. If there are few units in the treatment group and many units in the control group, we must be careful not to overfit the data for the treatment group. But a complex model for the control group and simple model for the treatment group, could lead to unreasonable CATE estimates that don't capture the true treatment effect well. 
+
 ## The "X"-shaped method
 The X-learner is more involved than the S- and T-learner. It has several stages and includes a model for the propensity score (the estimated probability that treatment is given). 
 
-Exactly like the T-learner, we start with fitting two separate models--one the control group and one on the treatment group:
+Exactly like the T-learner, we start with fitting two separate models--one on the control group and one on the treatment group:
 
 $$
 \begin{aligned}
@@ -96,3 +98,5 @@ $$
 $$
 
 This balances the two group-specific estimates based on how likely a unit is to belong to each group. 
+
+If the data is imbalanced, and we choose a relatively simple model for $\hat{\mu}_1(x)$  to prevent overfitting, the model $\hat{\tau}_0(x)$ will be relatively poor. However, since we have more observations in the control group, the propensity score $\hat{e}(x)$ will be small. Thus, $\hat{\tau}_0(x)$ won't matter as much in the final CATE estimate.
