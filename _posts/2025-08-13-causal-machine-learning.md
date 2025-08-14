@@ -6,7 +6,7 @@ subtitle: It's difficult to measure the causal effect of actions or intervention
 
 I learned young that I could affect the world around me with my actions. If I threw my spoon on the floor as a toddler, an adult would hand it back to me. In adulthood, I find people to be preoccupied with perceiving their influence on the world. Corporate meetings are filled with individuals justifying their initiatives with numbers quantifying the value of their efforts: the marketing manager saying "our new promotion strategies have resulted in increased sales of  EUR 100,000" or the HR manager explaining "completing our training program increases the employee's productivity by 8%". These are causal statements about the effect of some intervention. Making precise statements about causal effects is difficult, but not impossible. 
 
-Formally, we are interested in estimating the Conditional Average Treatment Effect (CATE). This is a measure of how much the outcome changes if we change something (give "treatment") conditional on some other factors. For simplicity, we will assume the treatment is binary, but it doesn't have to be. If we were to sell a product at difference prices, that would be a continuous treatment.
+Formally, we are interested in estimating the Conditional Average Treatment Effect (CATE). This is a measure of how much the outcome changes if we change something (give "treatment") conditional on some other factors. For simplicity, we will assume the treatment is binary, but it doesn't have to be. If we were to sell a product at different prices, that would be a continuous treatment.
 
 The mathematical definition of the CATE is:
 
@@ -18,7 +18,7 @@ where $Y(1)$ is the outcome with the treatment, and $Y(0)$ is the outcome withou
 
 Unfortunately, we can't always observe the CATE directly, because that would require us to assign both treatment and no-treatment to the same unit. Since we can't observe it, we need methods for estimating it. 
 
-There are several frameworks for estimating the CATE. Here, I will present three--in order of the simplest to the most complex. Common to all of them is that they employ machine learning methods to predict the outcome $Y$. The choice of machine learning algorithm is irrelevant, but tree-based methods like random forests or boosting trees are popular. The frameworks differ in how they use the fitted model to estimate the CATE. The more complex frameworks will fit several models instead of one--some of them predicting other variables than the outcome. The choice of machine learning algorithm is commonly called the base-learner while the framework for estimating the CATE is called a meta-learner.
+There are several frameworks for estimating the CATE. Here, I will present three--in order of the simplest to the most complex. Common to all of them is that they employ machine learning methods to predict the outcome $Y$. The choice of machine learning algorithm is irrelevant, but tree-based methods like random forests or boosting trees are popular. The frameworks differ in how they use the fitted model (or models) to estimate the CATE. The more complex frameworks will fit several models instead of one--some of them predicting other variables than the outcome. The choice of machine learning algorithm is commonly called the base-learner, while the framework for estimating the CATE is called a meta-learner.
 
 ## The simplest method
 The S-learner is the simplest meta-learner. The "S" stands for "single" because we use a single model to estimate the outcome $Y$ from a set of input variables including the treatment variable $T$. By including the treatment variable as a feature, we can use the same model to make two predictions--one assuming treatment and one assuming no treatment. Then the CATE is just the difference between the two. 
@@ -65,7 +65,7 @@ However, the T-learner might not perform well if the data is imbalanced. If ther
 ## The "X"-shaped method
 The X-learner {% cite xlearner %} is more involved than the S- and T-learner. It has several stages and includes a model for the propensity score (the estimated probability that treatment is given). 
 
-Exactly like the T-learner, we start with fitting two separate models--one on the control group and one on the treatment group:
+Exactly like the T-learner, we start with fitting two separate models--one for the control group and one for the treatment group:
 
 $$
 \begin{aligned}
@@ -108,9 +108,9 @@ This balances the two group-specific estimates based on how likely a unit is to 
 If the data is imbalanced, and we choose a relatively simple model for $\hat{\mu}_1(x)$  to prevent overfitting, the model $\hat{\tau}_0(x)$ will be relatively poor (pay attention to the subscripts). However, since we have more observations in the control group, the propensity score $\hat{e}(x)$ will be small. Thus, $\hat{\tau}_0(x)$ won't influence the final CATE estimate as much.
 
 ## Endnote
-All three learners are implemented in the python packages [CausalML](https://causalml.readthedocs.io/en/latest/about.html) (from Uber) and [EconML](https://www.pywhy.org/EconML/index.html) (from Microsoft). 
+All three meta-learners are implemented in the python packages [CausalML](https://causalml.readthedocs.io/en/latest/about.html) (from Uber) and [EconML](https://www.pywhy.org/EconML/index.html) (from Microsoft). 
 
-Other meta-learners exist, some of which are implemented in one (or both) of the packages. If you are interested in learning more about them, the package documentation is a good place to start. 
+Other frameworks exist, some of which are implemented in one (or both) of the packages. If you are interested in learning more about them, the package documentation is a good place to start. 
 
 For a more general introduction to causal inference, I would recommend books by Judea Pearl and the online textbook [Causal Inference for the Brave and True](https://matheusfacure.github.io/python-causality-handbook/landing-page.html). The latter contains a chapter about meta-learners, which describes all three meta-learners mentioned here. 
 
