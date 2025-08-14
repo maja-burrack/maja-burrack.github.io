@@ -28,7 +28,6 @@
   doi = {10.48550/arXiv.1111.4246},
   url = {http://arxiv.org/abs/1111.4246},
   urldate = {2025-05-10},
-  abstract = {Hamiltonian Monte Carlo (HMC) is a Markov chain Monte Carlo (MCMC) algorithm that avoids the random walk behavior and sensitivity to correlated parameters that plague many MCMC methods by taking a series of steps informed by first-order gradient information. These features allow it to converge to high-dimensional target distributions much more quickly than simpler methods such as random walk Metropolis or Gibbs sampling. However, HMC's performance is highly sensitive to two user-specified parameters: a step size \{\textbackslash epsilon\} and a desired number of steps L. In particular, if L is too small then the algorithm exhibits undesirable random walk behavior, while if L is too large the algorithm wastes computation. We introduce the No-U-Turn Sampler (NUTS), an extension to HMC that eliminates the need to set a number of steps L. NUTS uses a recursive algorithm to build a set of likely candidate points that spans a wide swath of the target distribution, stopping automatically when it starts to double back and retrace its steps. Empirically, NUTS perform at least as efficiently as and sometimes more efficiently than a well tuned standard HMC method, without requiring user intervention or costly tuning runs. We also derive a method for adapting the step size parameter \{\textbackslash epsilon\} on the fly based on primal-dual averaging. NUTS can thus be used with no hand-tuning at all. NUTS is also suitable for applications such as BUGS-style automatic inference engines that require efficient "turnkey" sampling algorithms.},
   pubstate = {prepublished},
   keywords = {Computer Science - Machine Learning,Statistics - Computation},
 }
@@ -74,3 +73,15 @@
   bibsource    = {dblp computer science bibliography, https://dblp.org}
 }
 
+@article{xlearner,
+   title={Metalearners for estimating heterogeneous treatment effects using machine learning},
+   volume={116},
+   ISSN={1091-6490},
+   url={http://dx.doi.org/10.1073/pnas.1804597116},
+   DOI={10.1073/pnas.1804597116},
+   number={10},
+   journal={Proceedings of the National Academy of Sciences},
+   publisher={Proceedings of the National Academy of Sciences},
+   author={Künzel, Sören R. and Sekhon, Jasjeet S. and Bickel, Peter J. and Yu, Bin},
+   year={2019},
+   month=feb, pages={4156–4165} }
